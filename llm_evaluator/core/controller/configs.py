@@ -6,7 +6,7 @@ class SynthesizerConfig(BaseModel):
     pass
 
 class EvaluatorConfig(BaseModel): 
-    pass 
+    metric_params
 
 class Config(BaseModel): 
     pass
