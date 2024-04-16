@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from deepeval import evaluate
 
 class Evaluator(BaseModel): 
 
