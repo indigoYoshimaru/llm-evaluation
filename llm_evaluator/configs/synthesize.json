@@ -1,0 +1,24 @@
+{
+    "context": {
+        "db_name": "innovation_stg_internal-trainer",
+        "collection_name": "document_upload",
+        "gen_func": "generate_goldens", 
+        "generator": {
+            "max_goldens_per_context": 2,
+            "num_evolutions": 1,
+            "enable_breadth_evolve": false
+        }
+    },
+    "docs": {
+        "document_paths": [],
+        "document_folder_dir": "",
+        "gen_func": "generate_goldens_from_docs", 
+        "generator": {
+            "max_goldens_per_document": 2,
+            "chunk_size": 1024,
+            "chunk_overlap": 0,
+            "num_evolutions": 1,
+            "enable_breadth_evolve": false
+        }
+    }
+}

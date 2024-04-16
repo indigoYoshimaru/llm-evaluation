@@ -1,8 +1,14 @@
 from typing import Text
 from loguru import logger
+from pydantic import BaseModel
+
+class CustomSynthesizeTemplate(BaseModel): 
+    @staticmethod
+    def generate_synthetic_data(context: Text, max_goldens_per_context: Text):
+        pass
 
 
-class QATemplate:
+class QATemplate(CustomSynthesizeTemplate):
 
     # I hate this but we need to use static method to map to the deepeval's template :)
     @staticmethod
@@ -48,7 +54,7 @@ class QATemplate:
         return prompt
 
 
-class MQCTemplate:
+class MQCTemplate(CustomSynthesizeTemplate):
 
     @staticmethod
     def generate_synthetic_data(context: Text, max_goldens_per_context: Text):

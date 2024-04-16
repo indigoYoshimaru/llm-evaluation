@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "llm_evaluator"
+version = "0.1.0"
+description = "LLM-Evaluator: Fast synthesis dataset creation and LLM pipeline evaluation. Accelerate testing and performance assessment with ease."
+authors = ["Linh Phung"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2.7.0"
+typer = "^0.12.3"
+deepeval = "^0.21.27"
+loguru = "^0.7.2"
+fs-gcsfs = "^1.5.1"
+pandas = "^2.2.2"
+pymongo = "^4.6.3"
+markdownify = "^0.12.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

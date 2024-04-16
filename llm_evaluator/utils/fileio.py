@@ -115,7 +115,7 @@ class FileReader(ReaderWriterBase):
 
 
 class FileWriter(ReaderWriterBase):
-    def __init__(self, cfg: ReaderWriterConfig, fs: GCSFS = None):
+    def __init__(self, cfg: ReaderWriterConfig = None, fs: GCSFS = None):
         mapper = dict(
             csv=self.write_df,
             xlsx=self.write_df,
