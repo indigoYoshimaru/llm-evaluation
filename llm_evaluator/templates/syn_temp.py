@@ -34,7 +34,8 @@ class QATemplate(CustomSynthesizeTemplate):
                 ]  
             }}
 
-            `input` MUST be in VIETNAMESE, if not, please translate to VIETNAMESE!
+            `input` MUST be in VIETNAMESE, if not, please translate it to VIETNAMESE!
+            Kết quả trả về phải ở tiếng Việt!!
             You should NOT incorporate any prior knowledge you have and take each context at face value.
             You MUST include at least one question as the input.
             `input` MUST be a STRING.

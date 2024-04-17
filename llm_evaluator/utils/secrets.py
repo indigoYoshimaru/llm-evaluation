@@ -23,5 +23,5 @@ def encode(data_dict: Dict, ignored: List = []):
         if k in ignored:
             continue
         data_dict[k] = base64.b64encode(json.dumps(v).encode("utf-8")).decode()
-        print(type(data_dict[k]))
+        
     return data_dict

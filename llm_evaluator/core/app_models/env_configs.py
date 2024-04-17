@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Text
 from loguru import logger
 from llm_evaluator.utils import fileio, secrets
+from enum import Enum
 
 
 class Database(BaseModel):
@@ -30,6 +31,11 @@ class Client(BaseModel):
 
 class ChatAPI(BaseModel):
     key: Text
+
+
+class EnvVarEnum(str, Enum):
+    db = "database"
+    sv = "service"
 
 
 class EnvConfig:
