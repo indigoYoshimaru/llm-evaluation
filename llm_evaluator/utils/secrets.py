@@ -11,7 +11,7 @@ def decode(data_dict: Dict):
                 base64.b64decode(v, validate=False).decode("utf-8")
             )
         except Exception as e:
-            logger.error(
+            logger.warning(
                 f"{type(e).__name__}: {e}. May not be encoded string, reuse the original value"
             )
             data_dict[k] = v

@@ -11,6 +11,7 @@ class Database(BaseModel):
     user: Text
 
     def __str__(self) -> Text:
+        # temporary only works with mongo!
         if self.address.startswith("mongodb"):
             return (
                 "mongodb://{user}:{password}@{address}/?authSource={auth}".format(
@@ -31,16 +32,32 @@ class ChatAPI(BaseModel):
     key: Text
 
 
-class EnvConfig(BaseModel):
-    # 
+class EnvConfig:
+    #
     def __init__(self, config_path: Text):
-        super().__init__()
         try:
             file_reader = fileio.FileReader()
-            cfg_dict = file_reader.read(config_path)['env']
+            cfg_dict = file_reader.read(config_path)["env"]
             cfg_dict = secrets.decode(cfg_dict)
             del file_reader
-            for db_name, db_val in cfg_dict['database'].items(): 
-                setattr(self, db_name, Database(**db_val))
         except Exception as e:
-            raise e
+            raise RuntimeError(
+                "Cannot read config file. Are you sure your config file is correct?"
+            )
+        else:
+            logger.info(f"Mapping the configs")
+        try:
+            for db_name, db_val in cfg_dict["database"].items():
+                self.__dict__[db_name] = Database(**db_val)
+            for sv_name, sv_dict in cfg_dict["service"].items():
+                if "client" in sv_name:
+                    service = Client(**sv_dict)
+                else:
+                    service = ChatAPI(**sv_dict)
+                self.__dict__[sv_name] = service
+        except Exception as e:
+            raise RuntimeError(
+                "Cannot mapping your Env config. You can start yelling now"
+            )
+        else:
+            logger.info(f"Config mapped!")

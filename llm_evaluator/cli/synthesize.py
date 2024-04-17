@@ -5,9 +5,9 @@ from llm_evaluator.core.synthesizer import DataSource
 app = typer.Typer(name="synthesizer")
 
 
-@app.command()
+@app.command(help="Wanna create a multiple choice test set?")
 def create_mqc_dataset(
-    config_dir: str = 'llm_evaluator/configs/synthesize.json',
+    config_dir: str = "llm_evaluator/configs/synthesize.json",
     dataset_save_dir: str = "dataset",
     model: str = "gpt-3.5-turbo-0125",
     data_source: Annotated[
@@ -15,10 +15,13 @@ def create_mqc_dataset(
     ] = DataSource.retrieve_context,
 ):
 
-    print(data_source.name)
+    # from llm_evaluator import
+    pass
 
 
-@app.command()
+@app.command(
+    help="Generating the good old Q&A test set to evaluate both your LLM and RAG"
+)
 def create_qa_dataset(
     dataset_metadata_dir: str,
     model: str,
