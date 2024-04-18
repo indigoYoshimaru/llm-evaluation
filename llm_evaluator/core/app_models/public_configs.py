@@ -35,5 +35,3 @@ class SynthesizerConfig(BaseModel):
         super().__init__(context_form=context_form, **cfg_dict_opt)
 
 
-class EvaluatorConfig(BaseModel):
-    pass

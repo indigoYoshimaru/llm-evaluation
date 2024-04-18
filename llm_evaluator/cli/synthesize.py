@@ -41,7 +41,7 @@ def create_mqc_dataset(
         template=QATemplate,
         data_source=data_source,
     )
-    
+
     if dataset_save_dir:
         synthesizer.save_local(dataset, dataset_save_dir, document_id)
 
@@ -79,11 +79,10 @@ def create_qa_dataset(
         template=QATemplate,
         data_source=data_source,
     )
-    
+
     if dataset_save_dir:
         synthesizer.save_local(dataset, dataset_save_dir, document_id)
 
+
 if __name__ == "__main__":
     app()
-
-    

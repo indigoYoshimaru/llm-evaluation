@@ -1,10 +1,13 @@
 from pydantic import BaseModel
 from deepeval import evaluate
+from typing import List
 
 class Evaluator(BaseModel): 
+    metrics: List
+    threshold: float
 
-    def eval_task(self, metrics, ): 
-        ...
+    def eval_task(self, metrics): 
+        
 
     def eval_gen_model(self, metrics): 
         ...
