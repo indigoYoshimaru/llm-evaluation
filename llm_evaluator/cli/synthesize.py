@@ -1,6 +1,5 @@
 import typer
-from typing_extensions import Annotated
-from llm_evaluator.core.synthesizer import DataSourceEnum
+from llm_evaluator.core.enums import DataSourceEnum
 
 app = typer.Typer(
     name="synthesizer",

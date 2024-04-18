@@ -1,11 +1,7 @@
 {
-    "dataset": "", 
-    "evaluated-route": "", 
-    "judge-model": "", 
     "metrics": {
         "hallucination": true, 
-        "answer-revelency": false
+        "answer-revelancy": false
     },
     "passed-threshold": 0.5
-
 }

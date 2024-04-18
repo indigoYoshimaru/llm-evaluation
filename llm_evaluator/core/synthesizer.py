@@ -5,15 +5,9 @@ from typing import Text, Type, Any
 from llm_evaluator.templates.syn_temp import CustomSynthesizeTemplate
 from pydantic import BaseModel
 from loguru import logger
-from enum import Enum
 from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
 from llm_evaluator import ENVCFG
-
-
-class DataSourceEnum(str, Enum):
-    retrieve_context = "context"
-    retrieve_document_paths = "document_paths"
-    retrieve_document_paths_from_folder_dir = "folder_dir"
+from llm_evaluator.core.enums import DataSourceEnum
 
 
 class Synthesizer(BaseModel):
