@@ -14,9 +14,9 @@ class SynthesizerConfig(BaseModel):
     context_form: Text = None
     doc_idx: int = 0
 
-    def __init__(self, config_dir: Text, data_source: Text):
+    def __init__(self, config_path: Text, data_source: Text):
         try:
-            cfg_dict = file_reader.read(config_dir)
+            cfg_dict = file_reader.read(config_path)
             assert cfg_dict, "Cannot find config file"
 
         except Exception as e:
@@ -35,3 +35,18 @@ class SynthesizerConfig(BaseModel):
         super().__init__(context_form=context_form, **cfg_dict_opt)
 
 
+class EvaluatorConfig(BaseModel):
+    db_name: Text = None
+    collection_name: Text = None
+    metrics: Dict = None
+    model_api: Text = None
+    threshold: float = None
+
+    def __init__(self, config_path: Text):
+        try:
+            cfg_dict = file_reader.read(config_path)
+            assert cfg_dict, "Cannot find config file"
+        except Exception as e:
+            raise e
+        else:
+            super().__init__(**cfg_dict)

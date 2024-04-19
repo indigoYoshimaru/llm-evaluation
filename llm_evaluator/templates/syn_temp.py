@@ -73,7 +73,7 @@ class QATemplate(CustomSynthesizeTemplate):
                 ]  
             }}
 
-            các câu hỏi ở `input` PHẢI ĐƯỢC VIẾT BẰNG TIẾNG VIỆT, nếu không, vui lòng dịch sang TIẾNG VIỆT!
+            các câu hỏi ở `input` PHẢI ĐƯỢC VIẾT BẰNG TIẾNG VIỆT VÀ CHỈ BẰNG TIẾNG VIỆT.
             Bạn KHÔNG ĐƯỢC KẾT HỢP bất kỳ kiến thức trước đó nào và hãy xem xét mỗi ngữ cảnh một cách đơn giản.
             Bạn PHẢI BAO GỒM ít nhất một câu hỏi làm đầu vào.
             `input` PHẢI LÀ MỘT CHUỖI.

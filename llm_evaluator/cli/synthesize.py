@@ -32,17 +32,22 @@ def create_mqc_dataset(
 ):
     from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
     from llm_evaluator.core.synthesizer import Synthesizer
-    from llm_evaluator.templates.syn_temp import QATemplate
+    from llm_evaluator.templates.syn_temp import MQCTemplate
 
     synthesizer_cfg = SynthesizerConfig(config_dir, data_source)
     synthesizer = Synthesizer(config=synthesizer_cfg)
     document_id, dataset = synthesizer.generate(
         syn_model=model,
-        template=QATemplate,
+        template=MQCTemplate,
         data_source=data_source,
     )
 
     if dataset_save_dir:
+        import os
+
+        dataset_save_dir = os.path.join(dataset_save_dir, "mqc")
+        if not os.path.exists(dataset_save_dir):
+            os.mkdir(dataset_save_dir)
         synthesizer.save_local(dataset, dataset_save_dir, document_id)
 
 
@@ -81,6 +86,11 @@ def create_qa_dataset(
     )
 
     if dataset_save_dir:
+        import os
+
+        dataset_save_dir = os.path.join(dataset_save_dir, "qa")
+        if not os.path.exists(dataset_save_dir):
+            os.mkdir(dataset_save_dir)
         synthesizer.save_local(dataset, dataset_save_dir, document_id)
 
 

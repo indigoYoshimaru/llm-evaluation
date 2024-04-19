@@ -18,7 +18,6 @@ class Synthesizer(BaseModel):
         from markdownify import markdownify as md
         from pymongo.mongo_client import MongoClient
 
-        chunk_content = []
         try:
             db_client = MongoClient(str(ENVCFG.db))
             collection = db_client[self.config.db_name][self.config.collection_name]
@@ -27,8 +26,9 @@ class Synthesizer(BaseModel):
                 self.config.doc_idx
             ]
 
-            for chunk in doc["chunk_content"]:
-                chunk_content.append(chunk.split("\n"))
+            # for chunk in doc["chunk_content"]:
+            #     chunk_content.append(chunk.split("\n"))
+            chunk_content = [chunk.split("\n") for chunk in doc["chunk_content"]]
 
         except Exception as e:
             raise e
@@ -95,9 +95,7 @@ class Synthesizer(BaseModel):
         document_id: Text,
     ):
         try:
-            # dataset.save_as(
-            #     file_type="json", directory=dataset_save_dir  # for consistency!
-            # )
+
             from llm_evaluator.utils.fileio import FileWriter
             import os
 

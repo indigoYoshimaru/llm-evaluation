@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Text
+from typing import Text, Dict
 from loguru import logger
 from llm_evaluator.utils import fileio, secrets
 from enum import Enum
@@ -39,7 +39,7 @@ class EnvVarEnum(str, Enum):
 
 
 class EnvConfig:
-    #
+
     def __init__(self, config_path: Text):
         try:
             file_reader = fileio.FileReader()
@@ -58,8 +58,10 @@ class EnvConfig:
             for sv_name, sv_dict in cfg_dict["service"].items():
                 if "client" in sv_name:
                     service = Client(**sv_dict)
-                else:
+                elif sv_name in ["openai", "claude"]:
                     service = ChatAPI(**sv_dict)
+                else:
+                    service = sv_dict
                 self.__dict__[sv_name] = service
         except Exception as e:
             raise RuntimeError(

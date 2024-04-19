@@ -1,0 +1,17 @@
+{
+    "db_name": "innovation_stg_internal-trainer",
+    "collection_name": "chat_ticket",
+    "model_api": "http://0.0.0.0:80/chat",
+    "metrics": {
+        "hallucination": true,
+        "answer_relevancy": false,
+        "faithfullness": false,
+        "bias": false,
+        "toxicity": false
+    },
+    "metric-params": {
+        "threshold": 0.5,
+        "include_reason": true,
+        "async_mode": true
+    }
+}

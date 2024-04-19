@@ -1,10 +1,15 @@
 from deepeval.metrics import * 
-from pydantic import BaseModel
+from enum import Enum
 
-class JudgeMetrics(BaseModel): 
-    pass
+class QAJudgeMetrics(Enum): 
+    answer_relevancy = AnswerRelevancyMetric
+    hallucination = HallucinationMetric
+    faithfullness = FaithfulnessMetric
+    bias = BiasMetric
+    toxicity = ToxicityMetric
+    
 
-class NLPMetrics(BaseModel): 
+class NLPMetrics(): 
     pass 
 
-# and class of metrics that inheirits deepeval metrics
+
