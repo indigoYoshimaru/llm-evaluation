@@ -1,11 +1,11 @@
-from pydantic import BaseModel
-from deepeval import evaluate
-from deepeval.dataset import EvaluationDataset
-from typing import List, Text
-from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
-from loguru import logger
-from llm_evaluator import ENVCFG
 import asyncio
+from loguru import logger
+from typing import List, Text
+from pydantic import BaseModel
+from deepeval.dataset import EvaluationDataset
+from llm_evaluator import ENVCFG
+from llm_evaluator.core.metrics import MetricTypeEnum
+from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
 
 
 class Evaluator(BaseModel):
@@ -13,12 +13,24 @@ class Evaluator(BaseModel):
     config: EvaluatorConfig = None
     dataset: EvaluationDataset = None
 
-    
+    def __init__(self, config: EvaluatorConfig, question_type: Text):
+        try:
+            metric_type = MetricTypeEnum().model_dump()[question_type]
+            metrics = [
+                getattr(metric_type, metric_name).value(**config.metric_params)
+                for metric_name in config.metrics
+                if config.metrics[metric_name]
+            ]
+
+        except Exception as e:
+            raise e
+        else:
+            super().__init__(metrics=metrics, config=config)
 
     def eval_rag(self, dataset_path: Text): ...
 
     def eval_gen_model(self, dataset_path: Text, judge_model: Text):
-        try: 
+        try:
             self.dataset = EvaluationDataset()
             self.dataset.add_test_cases_from_json_file(
                 file_path=dataset_path,
@@ -31,27 +43,23 @@ class Evaluator(BaseModel):
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self.__invoke_chat_api())
             loop.close()
-        except Exception as e: 
-            logger.error(f'{type(e).__name__}: {e}. Error during invoking API.')
+        except Exception as e:
+            logger.error(f"{type(e).__name__}: {e}. Error during invoking API.")
             raise e
-        
-        try: 
-            metric_params = dict(
-                threshold = self.config.threshold, 
-                model = judge_model, 
-            )
-        except Exception as e: 
-            raise e
-        
-        return test_results
 
+        try:
+            test_results = self.dataset.evaluate(metrics=self.metrics)
+        except Exception as e:
+            raise e
+        else:
+            return test_results
 
     async def __invoke_chat_api(self):
         import requests as re
 
         task_list = list()
         try:
-            
+
             for idx, test_case in enumerate(self.dataset.test_cases):
                 response = re.post(
                     url=self.config.model_api,
@@ -70,7 +78,7 @@ class Evaluator(BaseModel):
                         self.__get_answer(test_case_idx=idx, ticket_id=ticket_id)
                     )
                 )
-                if len(task_list)>=3: 
+                if len(task_list) >= 3:
                     await asyncio.wait(task_list)
                     task_list = list()
 

@@ -40,7 +40,7 @@ class EvaluatorConfig(BaseModel):
     collection_name: Text = None
     metrics: Dict = None
     model_api: Text = None
-    threshold: float = None
+    metric_params: Dict = None
 
     def __init__(self, config_path: Text):
         try:

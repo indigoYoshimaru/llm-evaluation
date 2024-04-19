@@ -11,7 +11,7 @@ app = typer.Typer(
 @app.command()
 def eval_model(
     config_file: str = typer.Option(
-        default="llm_evaluator/configs/eval.json",
+        default="llm_evaluator/configs/model_eval.json",
         help="Directory to your eval config file for tweaking metrics and threshold",
     ),
     judge_model: str = typer.Option(
@@ -22,7 +22,7 @@ def eval_model(
         default="dataset/qa/c0d8e70d-fcf8-460a-8bb0-33c6809a5936.json",
         help="Path to the generated dataset.",
     ),
-    question_type: str = typer.Option(
+    question_type: QuestionTypeEnum = typer.Option(
         default=QuestionTypeEnum.qa, help="Dataset question type"
     ),
 ):
@@ -30,7 +30,7 @@ def eval_model(
     from llm_evaluator.core.evaluator import Evaluator
 
     cfg = EvaluatorConfig(config_path=config_file)
-    evaluator = Evaluator(config=cfg, question_type=question_type)
+    evaluator = Evaluator(config=cfg, question_type=question_type.name)
     test_results = evaluator.eval_gen_model(dataset_path = dataset, judge_model=judge_model)
     print(test_results)
 

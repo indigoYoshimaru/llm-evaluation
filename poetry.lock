@@ -398,13 +398,13 @@ vision = ["Pillow (>=6.2.1)"]
 
 [[package]]
 name = "deepeval"
-version = "0.21.27"
+version = "0.21.29"
 description = "The open-source evaluation framework for LLMs."
 optional = false
 python-versions = "*"
 files = [
-    {file = "deepeval-0.21.27-py3-none-any.whl", hash = "sha256:750bcb6af382fe4be78d9a7ac4bbfa83e3e2026d92ee097d67edb1d8c8b4e4b5"},
-    {file = "deepeval-0.21.27.tar.gz", hash = "sha256:7007c9472406e8af89638daa5c67f25a0c71193e3fd84f499b4d67af2ebdda5d"},
+    {file = "deepeval-0.21.29-py3-none-any.whl", hash = "sha256:c212857119ec1e852d6ce5cae0ed77852cf41a0d9d92931b6abee19a077500cb"},
+    {file = "deepeval-0.21.29.tar.gz", hash = "sha256:bdee5eb9b61c88fcc3045eb4c814108d5187758202cd79d183f17a1daf1591d4"},
 ]
 
 [package.dependencies]
@@ -424,6 +424,7 @@ requests = "*"
 rich = "*"
 sentry-sdk = "*"
 tabulate = "*"
+tenacity = ">=8.2.3,<8.3.0"
 tqdm = "*"
 typer = "*"
 
@@ -485,6 +486,42 @@ python-versions = "*"
 files = [
     {file = "docx2txt-0.8.tar.gz", hash = "sha256:2c06d98d7cfe2d3947e5760a57d924e3ff07745b379c8737723922e7009236e5"},
 ]
+
+[[package]]
+name = "evaluate"
+version = "0.4.1"
+description = "HuggingFace community-driven open-source library of evaluation"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "evaluate-0.4.1-py3-none-any.whl", hash = "sha256:3ff079ab09572c0a2c1e6d749887c19f6783ab993320412cd39f6fe501d28510"},
+    {file = "evaluate-0.4.1.tar.gz", hash = "sha256:d721d9f2059ced79770d8a0509e954fbd1bbac96a8f9160e29888d8073cda3d9"},
+]
+
+[package.dependencies]
+datasets = ">=2.0.0"
+dill = "*"
+fsspec = {version = ">=2021.05.0", extras = ["http"]}
+huggingface-hub = ">=0.7.0"
+multiprocess = "*"
+numpy = ">=1.17"
+packaging = "*"
+pandas = "*"
+requests = ">=2.19.0"
+responses = "<0.19"
+tqdm = ">=4.62.1"
+xxhash = "*"
+
+[package.extras]
+dev = ["Werkzeug (>=1.0.1)", "absl-py", "accelerate", "bert-score (>=0.3.6)", "black (>=22.0,<23.0)", "cer (>=1.2.0)", "charcut (>=1.1.1)", "flake8 (>=3.8.3)", "isort (>=5.0.0)", "jiwer", "mauve-text", "nltk", "pytest", "pytest-datadir", "pytest-xdist", "pyyaml (>=5.3.1)", "requests-file (>=1.5.1)", "rouge-score (>=0.1.2)", "sacrebleu", "sacremoses", "scikit-learn", "scipy", "sentencepiece", "seqeval", "six (>=1.15.0,<1.16.0)", "tensorflow (>=2.3,!=2.6.0,!=2.6.1,<=2.10)", "texttable (>=1.6.3)", "tldextract (>=3.1.0)", "toml (>=0.10.1)", "torch", "transformers", "trectools", "unidecode (>=1.3.4)"]
+docs = ["s3fs"]
+evaluator = ["scipy (>=1.7.1)", "transformers"]
+quality = ["black (>=22.0,<23.0)", "flake8 (>=3.8.3)", "isort (>=5.0.0)", "pyyaml (>=5.3.1)"]
+template = ["cookiecutter", "gradio (>=3.0.0)"]
+tensorflow = ["tensorflow (>=2.2.0,!=2.6.0,!=2.6.1)"]
+tensorflow-gpu = ["tensorflow-gpu (>=2.2.0,!=2.6.0,!=2.6.1)"]
+tests = ["Werkzeug (>=1.0.1)", "absl-py", "accelerate", "bert-score (>=0.3.6)", "cer (>=1.2.0)", "charcut (>=1.1.1)", "jiwer", "mauve-text", "nltk", "pytest", "pytest-datadir", "pytest-xdist", "requests-file (>=1.5.1)", "rouge-score (>=0.1.2)", "sacrebleu", "sacremoses", "scikit-learn", "scipy", "sentencepiece", "seqeval", "six (>=1.15.0,<1.16.0)", "tensorflow (>=2.3,!=2.6.0,!=2.6.1,<=2.10)", "texttable (>=1.6.3)", "tldextract (>=3.1.0)", "toml (>=0.10.1)", "torch", "transformers", "trectools", "unidecode (>=1.3.4)"]
+torch = ["torch"]
 
 [[package]]
 name = "execnet"
@@ -2390,6 +2427,24 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "responses"
+version = "0.18.0"
+description = "A utility library for mocking out the `requests` Python library."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "responses-0.18.0-py3-none-any.whl", hash = "sha256:15c63ad16de13ee8e7182d99c9334f64fd81f1ee79f90748d527c28f7ca9dd51"},
+    {file = "responses-0.18.0.tar.gz", hash = "sha256:380cad4c1c1dc942e5e8a8eaae0b4d4edf708f4f010db8b7bcfafad1fcd254ff"},
+]
+
+[package.dependencies]
+requests = ">=2.0,<3.0"
+urllib3 = ">=1.25.10"
+
+[package.extras]
+tests = ["coverage (>=6.0.0)", "flake8", "mypy", "pytest (>=4.6)", "pytest-cov", "pytest-localserver", "types-mock", "types-requests"]
+
+[[package]]
 name = "rich"
 version = "13.7.1"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
@@ -3037,4 +3092,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "f1cbd9249801df75936f5fbb6746591de9cc2a9fb84a0dda97394bae909431d8"
+content-hash = "1d3c16102b65318d151ab0bbdd9a9798e2cecb45f80bb3e1ed80491c7f517f4f"

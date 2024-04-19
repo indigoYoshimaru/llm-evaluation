@@ -3,15 +3,14 @@
     "collection_name": "chat_ticket",
     "model_api": "http://0.0.0.0:80/chat", 
     "metrics": {
-        "rouge": true, 
-        "bleu": false, 
+        "context_rouge": true, 
+        "context_bleu": false, 
         "contextual_precision": false, 
         "contextual_recall": false, 
         "contextual_relevancy": false
     },
-    "metric-params":{
+    "metric_params":{
         "threshold": 0.5, 
-        "include_reason": true, 
         "async_mode": true
     }
 }

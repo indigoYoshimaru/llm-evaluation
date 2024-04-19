@@ -9,7 +9,7 @@
         "bias": false,
         "toxicity": false
     },
-    "metric-params": {
+    "metric_params": {
         "threshold": 0.5,
         "include_reason": true,
         "async_mode": true
