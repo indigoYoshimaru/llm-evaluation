@@ -7,7 +7,7 @@
         "context_bleu": true, 
         "contextual_precision": false, 
         "contextual_recall": false, 
-        "contextual_relevancy": false
+        "contextual_relevancy": true
     },
     "metric_params":{
         "threshold": 0.5, 

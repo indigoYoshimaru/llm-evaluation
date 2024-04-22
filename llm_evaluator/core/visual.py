@@ -8,7 +8,6 @@ def _create_inner_table(metrics):
     table.add_column("Score", justify="center")
     table.add_column("Reason", justify="left")
     for metric in metrics:
-        print(metric.__dict__)
         success = "✅" if metric.success else "❌"
         table.add_row(
             metric.__name__,
@@ -20,11 +19,11 @@ def _create_inner_table(metrics):
 
 def view_result(result):
     table = Table(title="test-result", show_lines=True, expand=True)
-    table.add_column("Input", justify="left", ratio=0.5)
-    table.add_column("Actual output", justify="left", ratio=1)
+    table.add_column("Input", justify="left", ratio=0.5, style="red")
+    table.add_column("Actual output", justify="left", ratio=1, style="cyan")
     table.add_column("Org context", justify="left", ratio=1)
     table.add_column("Retrieved context ", justify="left", ratio=1)
-    table.add_column("Metric", justify="center", ratio=2)
+    table.add_column("Metric", justify="center", ratio=2, style="yellow")
     for test_result in result:
         inner_table = _create_inner_table(test_result.metrics)
         context = ". ".join(test_result.context)

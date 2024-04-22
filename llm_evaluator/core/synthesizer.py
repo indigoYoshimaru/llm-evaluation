@@ -1,8 +1,12 @@
 from deepeval.dataset import EvaluationDataset
 from deepeval import synthesizer
 from deepeval.models import GPTModel
+from deepeval.progress_context import synthesizer_progress_context
 from typing import Text, Type, Any
-from llm_evaluator.templates.syn_temp import CustomSynthesizeTemplate
+from llm_evaluator.templates.syn_temp import (
+    CustomSynthesizeTemplate,
+    VietnamEvolutionTemplate,
+)
 from pydantic import BaseModel
 from loguru import logger
 from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
@@ -26,9 +30,11 @@ class Synthesizer(BaseModel):
                 self.config.doc_idx
             ]
 
-            # for chunk in doc["chunk_content"]:
-            #     chunk_content.append(chunk.split("\n"))
             chunk_content = [chunk.split("\n") for chunk in doc["chunk_content"]]
+            chunk_content = [
+                list(filter(lambda x: x and not x.isspace(), chunk))
+                for chunk in chunk_content
+            ]
 
         except Exception as e:
             raise e
@@ -73,11 +79,13 @@ class Synthesizer(BaseModel):
         )
         try:
             synthesizer.synthesizer.SynthesizerTemplate = template
-            gen_client = GPTModel(
-                model=syn_model,
-                _openai_api_key=ENVCFG.openai.key,
-            )
-            generator = synthesizer.Synthesizer(model=gen_client)
+            synthesizer.synthesizer.EvolutionTemplate = VietnamEvolutionTemplate
+
+            # gen_client = GPTModel(
+            #     model=syn_model,
+            #     _openai_api_key=ENVCFG.openai.key,
+            # )
+            generator = synthesizer.Synthesizer(model=syn_model)
             generator.using_native_model = True
             gen_func = gen_func_mapper[self.config.context_form]
 

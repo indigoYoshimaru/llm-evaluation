@@ -2,10 +2,10 @@
     "context": {
         "db_name": "innovation_stg_internal-trainer",
         "collection_name": "document_upload",
-        "doc_idx": 0, 
+        "doc_idx": 1, 
         "generator": {
-            "max_goldens_per_context": 2,
-            "num_evolutions": 1,
+            "max_goldens_per_context": 5,
+            "num_evolutions": 0,
             "enable_breadth_evolve": false
         }
     },

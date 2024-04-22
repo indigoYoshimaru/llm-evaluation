@@ -4,7 +4,7 @@
     "model_api": "http://0.0.0.0:80/chat",
     "metrics": {
         "hallucination": true,
-        "answer_relevancy": false,
+        "answer_relevancy": true,
         "faithfullness": false,
         "bias": false,
         "toxicity": false

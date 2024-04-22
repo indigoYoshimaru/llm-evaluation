@@ -45,7 +45,7 @@ class Evaluator(BaseModel):
                 expected_output_key_name="expected_output",
                 context_key_name="context",
             )
-
+            logger.info(f"Invoking chat API...")
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self.__invoke_chat_api())
             loop.close()
@@ -67,6 +67,7 @@ class Evaluator(BaseModel):
                 use_cache=False,
                 print_results=False,
                 write_cache=False,
+                show_indicator=False,
                 run_async=run_async,
             )
 
@@ -129,8 +130,13 @@ class Evaluator(BaseModel):
                 chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
+            context_chunks = chat_ticket["context"]
+            score_min_arg = min(
+                range(len(context_chunks)), key=lambda x: context_chunks[x]["score"]
+            )
+
             self.dataset.test_cases[test_case_idx].retrieval_context = [
-                chunk["page_content"] for chunk in chat_ticket["context"]
+                context_chunks[score_min_arg]["page_content"]
             ]
             # print(self.dataset.test_cases[test_case_idx])
         except Exception as e:

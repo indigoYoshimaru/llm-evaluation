@@ -17,8 +17,8 @@ class ContextRougeMetric(BaseMetric):
         try:
             rouge_score = evaluate.load("rouge")
             score_dict = rouge_score.compute(
-                references=[[". ".join(test_case.context)]],
-                predictions=[". ".join(test_case.retrieval_context)],
+                references=[[" ".join(test_case.context)]],
+                predictions=[" ".join(test_case.retrieval_context)],
             )
 
             assert score_dict, "Empty result"
@@ -56,8 +56,8 @@ class ContextBleuMetric(BaseMetric):
         try:
             bleu_score = evaluate.load("bleu")
             score_dict = bleu_score.compute(
-                references=[[". ".join(test_case.context)]],
-                predictions=[". ".join(test_case.retrieval_context)],
+                references=[[" ".join(test_case.context)]],
+                predictions=[" ".join(test_case.retrieval_context)],
             )
 
             assert score_dict, "Empty result"
@@ -71,6 +71,7 @@ class ContextBleuMetric(BaseMetric):
             )
             self.score = score_dict.get("bleu", 0)
             self.success = True
+            self.reason = ""
             if self.score < self.threshold:
                 self.success = False
                 self.reason = "Score below threshold"
