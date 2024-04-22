@@ -2,10 +2,16 @@ import asyncio
 from loguru import logger
 from typing import List, Text
 from pydantic import BaseModel
+from deepeval import evaluate
 from deepeval.dataset import EvaluationDataset
 from llm_evaluator import ENVCFG
-from llm_evaluator.core.metrics import MetricTypeEnum
+from llm_evaluator.core.metrics import (
+    MetricTypeEnum,
+    ContextRougeMetric,
+    ContextBleuMetric,
+)
 from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
+from llm_evaluator.core.visual import view_result
 
 
 class Evaluator(BaseModel):
@@ -13,11 +19,13 @@ class Evaluator(BaseModel):
     config: EvaluatorConfig = None
     dataset: EvaluationDataset = None
 
-    def __init__(self, config: EvaluatorConfig, question_type: Text):
+    def __init__(self, config: EvaluatorConfig, question_type: Text, judge_model: Text):
         try:
             metric_type = MetricTypeEnum().model_dump()[question_type]
             metrics = [
-                getattr(metric_type, metric_name).value(**config.metric_params)
+                getattr(metric_type, metric_name).value(
+                    **config.metric_params, model=judge_model
+                )
                 for metric_name in config.metrics
                 if config.metrics[metric_name]
             ]
@@ -27,9 +35,7 @@ class Evaluator(BaseModel):
         else:
             super().__init__(metrics=metrics, config=config)
 
-    def eval_rag(self, dataset_path: Text): ...
-
-    def eval_gen_model(self, dataset_path: Text, judge_model: Text):
+    def evaluate(self, dataset_path: Text):
         try:
             self.dataset = EvaluationDataset()
             self.dataset.add_test_cases_from_json_file(
@@ -48,10 +54,26 @@ class Evaluator(BaseModel):
             raise e
 
         try:
-            test_results = self.dataset.evaluate(metrics=self.metrics)
+            run_async = True
+            for metric in self.metrics:
+                if isinstance(metric, ContextBleuMetric) or isinstance(
+                    metric, ContextRougeMetric
+                ):
+                    run_async = False
+                    break
+            test_results = evaluate(
+                metrics=self.metrics,
+                test_cases=self.dataset.test_cases,
+                use_cache=False,
+                print_results=False,
+                write_cache=False,
+                run_async=run_async,
+            )
+
         except Exception as e:
             raise e
         else:
+            view_result(result=test_results)
             return test_results
 
     async def __invoke_chat_api(self):
@@ -101,7 +123,7 @@ class Evaluator(BaseModel):
         try:
 
             chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
-            print(chat_ticket)
+
             while chat_ticket["status"] != "DONE":
                 await asyncio.sleep(2)
                 chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
@@ -110,6 +132,6 @@ class Evaluator(BaseModel):
             self.dataset.test_cases[test_case_idx].retrieval_context = [
                 chunk["page_content"] for chunk in chat_ticket["context"]
             ]
-            print(self.dataset.test_cases[test_case_idx])
+            # print(self.dataset.test_cases[test_case_idx])
         except Exception as e:
             raise e

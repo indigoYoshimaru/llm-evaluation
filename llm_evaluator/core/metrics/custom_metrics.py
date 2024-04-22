@@ -1,23 +1,41 @@
 from deepeval.metrics import BaseMetric
 from deepeval.test_case import LLMTestCase
 import evaluate
+from loguru import logger
 
 
 class ContextRougeMetric(BaseMetric):
 
-    def __init__(self, threshold: float = 0.5):
+    def __init__(self, threshold: float = 0.5, **params):
+        super().__init__()
+
+        self.metric_type = params.get("metric_type", "rougeL")
         self.threshold = threshold
-        self.rouge = evaluate.load("rogue")
+        self.async_mode = False  # does not provide async for custom metrics!
 
     def measure(self, test_case: LLMTestCase):
-        self.score = self.rouge.compute(
-            references=test_case.context, predictions=test_case.retrieval_context
-        )
-        self.success = True
-        if self.score < self.threshold:
-            self.success = False
+        try:
+            rouge_score = evaluate.load("rouge")
+            score_dict = rouge_score.compute(
+                references=[[". ".join(test_case.context)]],
+                predictions=[". ".join(test_case.retrieval_context)],
+            )
 
-        return self.score
+            assert score_dict, "Empty result"
+
+        except Exception as e:
+            logger.error(f"{type(e).__name__}: {e}")
+            raise e
+        else:
+            logger.success(
+                f"ROUGE score comparison for {test_case.input} results {score_dict}"
+            )
+            self.score = score_dict.get(self.metric_type, 0)
+            self.success = True
+            self.reason = ""
+            if self.score < self.threshold:
+                self.success = False
+                self.reason = "Score below threshold"
 
     def is_successful(self):
         return self.success
@@ -29,23 +47,37 @@ class ContextRougeMetric(BaseMetric):
 
 class ContextBleuMetric(BaseMetric):
 
-    def __init__(self, threshold: float = 0.5):
+    def __init__(self, threshold: float = 0.5, **params):
+        super().__init__()
         self.threshold = threshold
-        self.bleu = evaluate.load("bleu")
+        self.async_mode = False  # does not provide async for custom metrics!
 
     def measure(self, test_case: LLMTestCase):
-        self.score = self.bleu.compute(
-            references=test_case.context, predictions=test_case.retrieval_context
-        )
-        self.success = True
-        if self.score < self.threshold:
-            self.success = False
+        try:
+            bleu_score = evaluate.load("bleu")
+            score_dict = bleu_score.compute(
+                references=[[". ".join(test_case.context)]],
+                predictions=[". ".join(test_case.retrieval_context)],
+            )
 
-        return self.score
+            assert score_dict, "Empty result"
+
+        except Exception as e:
+            logger.error(f"{type(e).__name__}: {e}")
+            raise e
+        else:
+            logger.success(
+                f"BLEU score comparison for {test_case.input} results {score_dict}"
+            )
+            self.score = score_dict.get("bleu", 0)
+            self.success = True
+            if self.score < self.threshold:
+                self.success = False
+                self.reason = "Score below threshold"
 
     def is_successful(self):
         return self.success
 
     @property
     def __name__(self):
-        return "ROUGE"
+        return "BLEU"

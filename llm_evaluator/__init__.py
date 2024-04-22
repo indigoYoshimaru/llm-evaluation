@@ -21,3 +21,4 @@ except Exception as e:
 else:
     logger.info(f"Loading env config from {ENVFILE}")
     ENVCFG = env_configs.EnvConfig(config_path=ENVFILE)
+    os.environ['OPENAI_API_KEY'] = ENVCFG.openai.key

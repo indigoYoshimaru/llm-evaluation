@@ -4,7 +4,7 @@
     "model_api": "http://0.0.0.0:80/chat", 
     "metrics": {
         "context_rouge": true, 
-        "context_bleu": false, 
+        "context_bleu": true, 
         "contextual_precision": false, 
         "contextual_recall": false, 
         "contextual_relevancy": false
@@ -13,4 +13,5 @@
         "threshold": 0.5, 
         "async_mode": true
     }
+
 }
