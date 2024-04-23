@@ -398,13 +398,13 @@ vision = ["Pillow (>=6.2.1)"]
 
 [[package]]
 name = "deepeval"
-version = "0.21.29"
+version = "0.21.32"
 description = "The open-source evaluation framework for LLMs."
 optional = false
 python-versions = "*"
 files = [
-    {file = "deepeval-0.21.29-py3-none-any.whl", hash = "sha256:c212857119ec1e852d6ce5cae0ed77852cf41a0d9d92931b6abee19a077500cb"},
-    {file = "deepeval-0.21.29.tar.gz", hash = "sha256:bdee5eb9b61c88fcc3045eb4c814108d5187758202cd79d183f17a1daf1591d4"},
+    {file = "deepeval-0.21.32-py3-none-any.whl", hash = "sha256:a009e11fe911f042ec72cf0130c4173bb13261270d59a46010ae64e39a213891"},
+    {file = "deepeval-0.21.32.tar.gz", hash = "sha256:6dba938a71ce7973ecbbc792038bff78d04b6517f24b22b438eca342cbbfe4fc"},
 ]
 
 [package.dependencies]
@@ -3092,4 +3092,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1d3c16102b65318d151ab0bbdd9a9798e2cecb45f80bb3e1ed80491c7f517f4f"
+content-hash = "9428030dbd3be62e908773e0c51ed40a5e62895e66892f66ddf6e6a3aba4b75e"

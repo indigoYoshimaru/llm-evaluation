@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.11"
 pydantic = "^2.7.0"
 typer = "^0.12.3"
-deepeval = "^0.21.28"
+deepeval = "^0.21.32"
 loguru = "^0.7.2"
 fs-gcsfs = "^1.5.1"
 pandas = "^2.2.2"
@@ -17,7 +17,9 @@ pymongo = "^4.6.3"
 markdownify = "^0.12.1"
 evaluate = "^0.4.1"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+llm-eval = "llm_evaluator.__main__:app"

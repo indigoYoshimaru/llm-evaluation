@@ -11,7 +11,7 @@ app = typer.Typer(
 @app.command()
 def eval_model(
     config_file: str = typer.Option(
-        default="llm_evaluator/configs/model_eval.json",
+        default="./configs/model_eval.json",
         help="Directory to your eval config file for tweaking metrics and threshold",
     ),
     judge_model: str = typer.Option(
@@ -28,8 +28,9 @@ def eval_model(
 ):
     from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
     from llm_evaluator.core.evaluator import Evaluator
-
-    cfg = EvaluatorConfig(config_path=config_file)
+    from llm_evaluator import APPDIR
+    import os
+    cfg = EvaluatorConfig(config_path=str(os.path.join(APPDIR, config_file)))
     evaluator = Evaluator(
         config=cfg,
         question_type=question_type.name,

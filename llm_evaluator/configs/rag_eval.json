@@ -1,7 +1,7 @@
 {
     "db_name": "innovation_stg_internal-trainer",
     "collection_name": "chat_ticket",
-    "model_api": "http://0.0.0.0:80/chat", 
+    "model_api": "http://0.0.0.0:80/test", 
     "metrics": {
         "context_rouge": true, 
         "context_bleu": true, 

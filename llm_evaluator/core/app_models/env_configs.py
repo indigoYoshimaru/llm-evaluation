@@ -41,17 +41,29 @@ class EnvVarEnum(str, Enum):
 class EnvConfig:
 
     def __init__(self, config_path: Text):
+        file_reader = fileio.FileReader()
         try:
-            file_reader = fileio.FileReader()
             cfg_dict = file_reader.read(config_path)["env"]
             cfg_dict = secrets.decode(cfg_dict)
-            del file_reader
         except Exception as e:
-            raise RuntimeError(
-                "Cannot read config file. Are you sure your config file is correct?"
+            logger.warning(
+                f"{type(e).__name__}: {e}. Cannot read config {config_path}."
             )
+            try:
+                from llm_evaluator import APPDIR
+
+                config_path = config_path.replace(APPDIR, "")
+                logger.warning(f"Retrying with relative path {config_path}")
+                cfg_dict = file_reader.read(config_path)["env"]
+                cfg_dict = secrets.decode(cfg_dict)
+            except Exception as e:
+                raise FileNotFoundError(
+                    f"Are you sure your both config file and the path {config_path} are correct?"
+                )
         else:
+            del file_reader
             logger.info(f"Mapping the configs")
+
         try:
             for db_name, db_val in cfg_dict["database"].items():
                 self.__dict__[db_name] = Database(**db_val)

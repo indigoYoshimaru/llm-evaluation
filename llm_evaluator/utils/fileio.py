@@ -36,7 +36,8 @@ class ReaderWriterBase(BaseModel):
         logger.info(f"{msg}")
         if not fs:
             logger.info("No GCSFS provided. Using OS filesystem.")
-            fs = OSFS(root_path=".")
+            fs = OSFS(root_path="/")
+            
         super().__init__(
             fs=fs,
             logger=logger,

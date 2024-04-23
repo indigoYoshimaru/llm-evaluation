@@ -52,6 +52,8 @@ class Evaluator(BaseModel):
         except Exception as e:
             logger.error(f"{type(e).__name__}: {e}. Error during invoking API.")
             raise e
+        else:
+            logger.success(f"Chat API invoked!")
 
         try:
             run_async = True
@@ -61,6 +63,7 @@ class Evaluator(BaseModel):
                 ):
                     run_async = False
                     break
+            logger.info("Running evaluation...")
             test_results = evaluate(
                 metrics=self.metrics,
                 test_cases=self.dataset.test_cases,
@@ -84,14 +87,21 @@ class Evaluator(BaseModel):
         try:
 
             for idx, test_case in enumerate(self.dataset.test_cases):
-                response = re.post(
-                    url=self.config.model_api,
-                    headers=ENVCFG.headers,
-                    json=dict(question=test_case.input),
-                ).json()
+                try:
+                    response = re.post(
+                        url=self.config.model_api,
+                        headers=ENVCFG.headers,
+                        json=dict(question=test_case.input),
+                        timeout=10,
+                    ).json()
+                except re.exceptions.Timeout as timeout_err:
+                    logger.warning(
+                        f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
+                    )
+                    continue
 
                 response_data = response.get("data", [])
-                assert response_data, "Invalid request"
+                assert response_data, response
                 ticket_id = response_data[0].get("ticket_id", "")
                 assert ticket_id, "No ticket id"
                 # answer, context = self.__get_answer(ticket_id=ticket_id)
@@ -107,7 +117,7 @@ class Evaluator(BaseModel):
 
             await asyncio.wait(task_list)
         except Exception as e:
-            logger.error(f"{type(e).__name__}: {e}. Cannot invoke chat api")
+            logger.error(f"{type(e).__name__}: {e}. Cannot invoke chat api.")
             raise e
 
     async def __get_answer(self, test_case_idx: int, ticket_id: int):
@@ -131,12 +141,12 @@ class Evaluator(BaseModel):
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
             context_chunks = chat_ticket["context"]
-            score_min_arg = min(
+            score_max_arg = max(
                 range(len(context_chunks)), key=lambda x: context_chunks[x]["score"]
             )
 
             self.dataset.test_cases[test_case_idx].retrieval_context = [
-                context_chunks[score_min_arg]["page_content"]
+                context_chunks[score_max_arg]["page_content"]
             ]
             # print(self.dataset.test_cases[test_case_idx])
         except Exception as e:

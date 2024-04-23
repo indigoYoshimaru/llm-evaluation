@@ -17,8 +17,10 @@ def init(
 ):
     import shutil
     from llm_evaluator import APPDIR
+    import os
 
     shutil.copy(env_path, APPDIR)
+    os.environ["env_file"] = str(os.path.join(APPDIR, "launch.json"))
 
 
 @app.command(help="Env var update", name="env")
@@ -61,6 +63,35 @@ def change_env_var(
     except Exception as e:
         logger.error(f"{type(e).__name__}: {e}")
         raise e
+
+
+@app.command(help="Temporary peek at true env file structure", name="env-peek")
+def peek(
+    env_file: str = typer.Option(default=".vscode/launch.json", help="Env file path")
+):
+    from llm_evaluator.utils.fileio import FileReader, FileWriter
+    from llm_evaluator.utils.secrets import encode, decode
+
+    from rich.table import Table
+    from rich.console import Console
+
+    console = Console()
+
+    env_cfg_dict = decode(FileReader().read(env_file)["env"])
+    for k, inner_dict in env_cfg_dict.items():
+        env_table = Table(title=k, show_lines=True, expand=True)
+        env_table.add_column(
+            "Key", style="yellow", justify="center", header_style="yellow"
+        )
+        env_table.add_column("Value", justify="left")
+        if isinstance(inner_dict, str):
+            env_table.add_row(k, inner_dict)
+            console.print(env_table)
+            continue
+
+        for k, v in inner_dict.items():
+            env_table.add_row(k, str(v))
+        console.print(env_table)
 
 
 if __name__ == "__main__":
