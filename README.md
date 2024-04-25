@@ -1,7 +1,6 @@
 # LLM Evaluator
 
-The CLI to create test set and evaluate your model and RAG pipeline. 
-For dataset generation, we support Question-Answering dataset type while
+The LLM Evaluator is a command-line interface (CLI) tool that allows you to create test sets and evaluate your model and RAG pipeline. It supports the generation of Question-Answering datasets for dataset generation.
 
 ## Installation
 1. Clone the project, change dir to the project folder and run: 
@@ -25,26 +24,26 @@ For dataset generation, we support Question-Answering dataset type while
 
 ##  Dataset Synthesis
 
-This module helps generating the dataset from the uploaded documents in the database or by your local documents. Generally, we attempt to get a 
+This module helps generating the dataset from the uploaded documents in the database or by your local documents. 
 ### Some notation
 - Golden: a test case in the dataset but without actual output from the chatbot. 
-- Evolution: a method to generate a more complex and diversity set of questions by providing logics, reasonings, comparison, hypothesis, etc., to the generation bot iteratively. Example: 
+- Evolution: a method to generate a more complex and diverse set of questions by providing logics, reasonings, comparison, hypothesis, etc., to the generation bot iteratively. Example: 
     - Example question: `What happens to water as it boils?`
     - Example rewritten question: `How does the boiling point of water at sea level compare to that of alcohol, and how does altitude affect water's boiling point?`
-- Breadth evolution: unlike iterative evolution, when enable, generator uses LLM to generate a more diversed version of the input, but not neccessarily provide extra form of knowledge. Example: 
+- Breadth evolution: When enabled, the generator uses LLM to generate a more diverse version of the input without necessarily providing extra forms of knowledge. Example: 
     - Example question: `What is the role of bees in ecosystems?`
     - Example rewritten question: `Considering the pivotal role bees play in pollinating both agricultural crops and wild plants, thereby contributing to the diversity of plant life and supporting the foundation of food chains, analyze how bees influence the growth and sustainability of various ecosystems.`
 ### Usage
 
-- Run command 
+- Run command: 
 
     ```
         llm-eval synthesize qa --config [path-to-the-config-directory] --dataset-save-dir <directory-to-save-location> --data-source <context|document_paths|folder_dir>
     ```
     in which
-    - `context`: mode that enable generation from database chunks of uploaded document, temporarily process 1 document per run
-    - `document_paths`: mode that enable reading the list of paths to the local documents
-    - `folder_dir`: mode that enable reading all documents in the given folder directory will be used to generate the dataset.
+    - `context`: Enables generation from database chunks of uploaded documents, temporarily processing one document per run.
+    - `document_paths`: Enables reading a list of paths to local documents.
+    - `folder_dir`: Enables reading all documents in the given folder directory to generate the dataset.
   
     Example: 
     ```
@@ -137,7 +136,8 @@ The metrics used in these section will be discussed in other documents
 ```
 ![Example output](img/eval-model.png)
 ### RAG
-- Evaluate the quality of the retriever using metrics that measure scores relating to the `retrieval_context`
+- Evaluate the quality of the retriever using metrics that measure scores between `retrieval_context` and others. 
+
 - Run command: 
     ```
         llm-eval evaluate eval-rag --config-file [path-to-config-file] --dataset <dataset-path> --judge-model <name-of-gpt-judge-model>
@@ -192,7 +192,7 @@ The metrics used in these section will be discussed in other documents
     }
 ```
 
-I know the steps are lengthy, I will work on these later
+Working on a more elegant method to effortlessly control and share secrets...
 
 
 ## TODO: 
