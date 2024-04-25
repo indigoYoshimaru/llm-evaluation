@@ -30,7 +30,8 @@ class ContextRougeMetric(BaseMetric):
             logger.success(
                 f"ROUGE score comparison for {test_case.input} results {score_dict}"
             )
-            self.score = score_dict.get(self.metric_type, 0)
+            
+            self.score = round(score_dict.get(self.metric_type, 0), 3)
             self.success = True
             self.reason = ""
             if self.score < self.threshold:
@@ -69,7 +70,7 @@ class ContextBleuMetric(BaseMetric):
             logger.success(
                 f"BLEU score comparison for {test_case.input} results {score_dict}"
             )
-            self.score = score_dict.get("bleu", 0)
+            self.score = round(score_dict.get("bleu", 0), 3)
             self.success = True
             self.reason = ""
             if self.score < self.threshold:

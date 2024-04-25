@@ -3,7 +3,7 @@
     "collection_name": "chat_ticket",
     "model_api": "https://api.stg.buymed.tech/buymed-innovation/internal-trainer/v1/chat", 
     "metrics": {
-        "hallucination": true,
+        "hallucination": false,
         "answer_relevancy": true,
         "faithfullness": true,
         "bias": false,

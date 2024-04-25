@@ -39,6 +39,9 @@ class EnvVarEnum(str, Enum):
 
 
 class EnvConfig:
+    conversation_id: Text = (
+        "140fdfa6-70ed-47cd-8860-9797a69ddd35"  # stupid move, change later!
+    )
 
     def __init__(self, config_path: Text):
         file_reader = fileio.FileReader()

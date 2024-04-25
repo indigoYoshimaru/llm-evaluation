@@ -447,7 +447,7 @@ class VietnamEvolutionTemplate:
         return (
             VietnamEvolutionTemplate.base_instruction
             + f"""
-            1. Rewrite `Input` to create a create a brand new prompt.
+            1. Rewrite `Input` to create a brand new prompt.
             2. `Rewritten Input` should belong to the same domain as the `input` but be even more rare.
             3. `Rewritten Input` should be concise, clear, and understandable by humans.
             4. `Rewritten Input` should not contain phrases like 'based on the provided context' or 'according to the context'.

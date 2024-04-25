@@ -1,7 +1,7 @@
 {
     "db_name": "innovation_stg_internal-trainer",
     "collection_name": "chat_ticket",
-    "model_api": "http://0.0.0.0:80/test", 
+    "model_api": "https://api.stg.buymed.tech/buymed-innovation/internal-trainer/v1/chat", 
     "metrics": {
         "context_rouge": true, 
         "context_bleu": true, 
@@ -11,6 +11,7 @@
     },
     "metric_params":{
         "threshold": 0.5, 
+        "include_reason": true,
         "async_mode": true
     }
 

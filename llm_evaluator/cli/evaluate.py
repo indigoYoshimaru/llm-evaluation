@@ -1,8 +1,12 @@
 import typer
+import os
+from llm_evaluator import APPDIR
+from llm_evaluator.core.evaluator import Evaluator
 from llm_evaluator.core.enums import QuestionTypeEnum
+from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
 
 app = typer.Typer(
-    name="evaluator",
+    name="evaluate",
     help="Wanna find out if your model or RAG passed the test case?",
     no_args_is_help=True,
 )
@@ -26,23 +30,27 @@ def eval_model(
         default=QuestionTypeEnum.qa, help="Dataset question type"
     ),
 ):
-    from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
-    from llm_evaluator.core.evaluator import Evaluator
-    from llm_evaluator import APPDIR
-    import os
+
     cfg = EvaluatorConfig(config_path=str(os.path.join(APPDIR, config_file)))
     evaluator = Evaluator(
         config=cfg,
         question_type=question_type.name,
         judge_model=judge_model,
     )
-    test_results = evaluator.evaluate(dataset_path=dataset)
+    test_results = evaluator.evaluate(
+        dataset_path=str(
+            os.path.join(
+                os.getcwd(),
+                dataset,
+            )
+        )
+    )
 
 
 @app.command()
 def eval_rag(
     config_file: str = typer.Option(
-        default="llm_evaluator/configs/rag_eval.json",
+        default="./configs/rag_eval.json",
         help="Directory to your eval config file for tweaking metrics and threshold",
     ),
     judge_model: str = typer.Option(
@@ -54,16 +62,21 @@ def eval_rag(
         help="Path to the generated dataset.",
     ),
 ):
-    from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
-    from llm_evaluator.core.evaluator import Evaluator
 
-    cfg = EvaluatorConfig(config_path=config_file)
+    cfg = EvaluatorConfig(config_path=str(os.path.join(APPDIR, config_file)))
     evaluator = Evaluator(
         config=cfg,
         question_type="rag",
         judge_model=judge_model,
     )
-    test_results = evaluator.evaluate(dataset_path=dataset)
+    test_results = evaluator.evaluate(
+        dataset_path=str(
+            os.path.join(
+                os.getcwd(),
+                dataset,
+            )
+        )
+    )
 
 
 if __name__ == "__main__":

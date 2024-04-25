@@ -62,7 +62,7 @@ class Evaluator(BaseModel):
                     metric, ContextRougeMetric
                 ):
                     run_async = False
-                    break
+                    
             logger.info("Running evaluation...")
             test_results = evaluate(
                 metrics=self.metrics,
@@ -84,26 +84,29 @@ class Evaluator(BaseModel):
         import requests as re
 
         task_list = list()
-        try:
 
-            for idx, test_case in enumerate(self.dataset.test_cases):
-                try:
-                    response = re.post(
-                        url=self.config.model_api,
-                        headers=ENVCFG.headers,
-                        json=dict(question=test_case.input),
-                        timeout=10,
-                    ).json()
-                except re.exceptions.Timeout as timeout_err:
-                    logger.warning(
-                        f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
-                    )
-                    continue
-
+        for idx, test_case in enumerate(self.dataset.test_cases):
+            try:
+                response = re.post(
+                    url=self.config.model_api,
+                    headers=ENVCFG.headers,
+                    json=dict(
+                        question=test_case.input,
+                        conversation_id=ENVCFG.conversation_id,
+                    ),
+                    timeout=20,
+                ).json()
+            except re.exceptions.Timeout as timeout_err:
+                logger.warning(
+                    f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
+                )
+                continue
+            try:
                 response_data = response.get("data", [])
                 assert response_data, response
                 ticket_id = response_data[0].get("ticket_id", "")
                 assert ticket_id, "No ticket id"
+
                 # answer, context = self.__get_answer(ticket_id=ticket_id)
 
                 task_list.append(
@@ -114,11 +117,13 @@ class Evaluator(BaseModel):
                 if len(task_list) >= 3:
                     await asyncio.wait(task_list)
                     task_list = list()
+            except Exception as e:
+                logger.error(
+                    f"{type(e).__name__}: {e} Cannot invoke chat API with {response_data=}"
+                )
+                raise e
 
-            await asyncio.wait(task_list)
-        except Exception as e:
-            logger.error(f"{type(e).__name__}: {e}. Cannot invoke chat api.")
-            raise e
+        await asyncio.wait(task_list)
 
     async def __get_answer(self, test_case_idx: int, ticket_id: int):
         from pymongo import MongoClient
@@ -138,6 +143,7 @@ class Evaluator(BaseModel):
             while chat_ticket["status"] != "DONE":
                 await asyncio.sleep(2)
                 chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
+                logger.info(f"Getting answers from {ticket_id=}")
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
             context_chunks = chat_ticket["context"]
@@ -148,6 +154,10 @@ class Evaluator(BaseModel):
             self.dataset.test_cases[test_case_idx].retrieval_context = [
                 context_chunks[score_max_arg]["page_content"]
             ]
-            # print(self.dataset.test_cases[test_case_idx])
         except Exception as e:
+            logger.error(
+                f"{type(e).__name__}: {e}. Cannot retrieve content of ticket {ticket_id}"
+            )
             raise e
+        else:
+            logger.success(f"Got answers from {ticket_id=}!")

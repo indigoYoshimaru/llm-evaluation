@@ -1,8 +1,9 @@
 import typer
+from llm_evaluator import APPDIR
 from llm_evaluator.core.enums import DataSourceEnum
 
 app = typer.Typer(
-    name="synthesizer",
+    name="synthesize",
     help="Need baseline? Then where's your test set?",
     no_args_is_help=True,
 )
@@ -30,25 +31,26 @@ def create_mqc_dataset(
         help="Data source to generate test set",
     ),
 ):
-    from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
-    from llm_evaluator.core.synthesizer import Synthesizer
-    from llm_evaluator.templates.syn_temp import MQCTemplate
+    raise NotImplementedError("Working on this, please wait!")
+    # from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
+    # from llm_evaluator.core.synthesizer import Synthesizer
+    # from llm_evaluator.templates.syn_temp import MQCTemplate
 
-    synthesizer_cfg = SynthesizerConfig(config_dir, data_source)
-    synthesizer = Synthesizer(config=synthesizer_cfg)
-    document_id, dataset = synthesizer.generate(
-        syn_model=model,
-        template=MQCTemplate,
-        data_source=data_source,
-    )
+    # synthesizer_cfg = SynthesizerConfig(config_dir, data_source)
+    # synthesizer = Synthesizer(config=synthesizer_cfg)
+    # document_id, dataset = synthesizer.generate(
+    #     syn_model=model,
+    #     template=MQCTemplate,
+    #     data_source=data_source,
+    # )
 
-    if dataset_save_dir:
-        import os
+    # if dataset_save_dir:
+    #     import os
 
-        dataset_save_dir = os.path.join(dataset_save_dir, "mqc")
-        if not os.path.exists(dataset_save_dir):
-            os.mkdir(dataset_save_dir)
-        synthesizer.save_local(dataset, dataset_save_dir, document_id)
+    #     dataset_save_dir = os.path.join(dataset_save_dir, "mqc")
+    #     if not os.path.exists(dataset_save_dir):
+    #         os.mkdir(dataset_save_dir)
+    #     synthesizer.save_local(dataset, dataset_save_dir, document_id)
 
 
 @app.command(
@@ -56,8 +58,8 @@ def create_mqc_dataset(
     help="Generating the good old Q&A test set to evaluate both your LLM and RAG",
 )
 def create_qa_dataset(
-    config_dir: str = typer.Option(
-        default="llm_evaluator/configs/synthesize.json",
+    config_file: str = typer.Option(
+        default="./configs/synthesize.json",
         help="Directory to your synthesis config",
     ),
     dataset_save_dir: str = typer.Option(
@@ -76,8 +78,12 @@ def create_qa_dataset(
     from llm_evaluator.core.app_models.public_configs import SynthesizerConfig
     from llm_evaluator.core.synthesizer import Synthesizer
     from llm_evaluator.templates.syn_temp import QATemplate
+    import os
 
-    synthesizer_cfg = SynthesizerConfig(config_dir, data_source)
+    synthesizer_cfg = SynthesizerConfig(
+        config_path=str(os.path.join(APPDIR, config_file)),
+        data_source=data_source,
+    )
     synthesizer = Synthesizer(config=synthesizer_cfg)
     document_id, dataset = synthesizer.generate(
         syn_model=model,
@@ -86,9 +92,12 @@ def create_qa_dataset(
     )
 
     if dataset_save_dir:
-        import os
 
-        dataset_save_dir = os.path.join(dataset_save_dir, "qa")
+        dataset_save_dir = os.path.join(
+            os.getcwd(),
+            dataset_save_dir,
+            "qa",
+        )
         if not os.path.exists(dataset_save_dir):
             os.mkdir(dataset_save_dir)
         synthesizer.save_local(dataset, dataset_save_dir, document_id)
