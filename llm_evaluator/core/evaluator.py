@@ -62,7 +62,7 @@ class Evaluator(BaseModel):
                     metric, ContextRougeMetric
                 ):
                     run_async = False
-                    
+
             logger.info("Running evaluation...")
             test_results = evaluate(
                 metrics=self.metrics,
