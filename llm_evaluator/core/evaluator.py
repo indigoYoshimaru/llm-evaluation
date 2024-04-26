@@ -96,18 +96,21 @@ class Evaluator(BaseModel):
                     ),
                     timeout=20,
                 ).json()
-            except re.exceptions.Timeout as timeout_err:
-                logger.warning(
-                    f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
-                )
-                continue
-            try:
+
                 response_data = response.get("data", [])
                 assert response_data, response
                 ticket_id = response_data[0].get("ticket_id", "")
                 assert ticket_id, "No ticket id"
 
-                # answer, context = self.__get_answer(ticket_id=ticket_id)
+            except re.exceptions.Timeout as timeout_err:
+                logger.warning(
+                    f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
+                )
+                continue
+            except AssertionError as e:
+                logger.warning(f"Empty response for question {test_case.input=}")
+                continue
+            try:
 
                 task_list.append(
                     asyncio.create_task(
@@ -118,9 +121,7 @@ class Evaluator(BaseModel):
                     await asyncio.wait(task_list)
                     task_list = list()
             except Exception as e:
-                logger.error(
-                    f"{type(e).__name__}: {e} Cannot invoke chat API with {response_data=}"
-                )
+                logger.error(f"{type(e).__name__}: {e} Cannot get answer from chat API")
                 raise e
 
         await asyncio.wait(task_list)
