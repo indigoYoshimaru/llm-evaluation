@@ -197,6 +197,7 @@ Working on a more elegant method to effortlessly control and share secrets...
 
 ## TODO: 
 - [ ] Create API
+- [ ] Update README for ENV
 - [ ] Message delete after evaluate
 - [ ] Create multiple datasets at once
 - [ ] Evaluate on multiple datasets at once

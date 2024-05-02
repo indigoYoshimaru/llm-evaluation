@@ -5,6 +5,13 @@ from loguru import logger
 
 file_reader = FileReader()
 
+class GeneratorParamsConfig(BaseModel): 
+    "max_goldens_per_document": 3,
+    "chunk_size": 1024,
+    "chunk_overlap": 0,
+    "num_evolutions": 1,
+    "enable_breadth_evolve": False
+
 
 class SynthesizerConfig(BaseModel):
     db_name: Text = None

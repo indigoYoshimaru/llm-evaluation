@@ -1,7 +1,8 @@
 import typer
+from loguru import logger
+from llm_evaluator import ENVFILE
 from llm_evaluator.cli import evaluate, synthesize
 from llm_evaluator.core.app_models.env_configs import EnvVarEnum
-from loguru import logger
 
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(evaluate.app)
@@ -21,6 +22,7 @@ def init(
 
     shutil.copy(env_path, APPDIR)
     os.environ["env_file"] = str(os.path.join(APPDIR, "launch.json"))
+    os.environ["default_run"] = "True"
 
 
 @app.command(help="Env var update", name="env")
@@ -67,7 +69,7 @@ def change_env_var(
 
 @app.command(help="Temporary peek at true env file structure", name="env-peek")
 def peek(
-    env_file: str = typer.Option(default=".vscode/launch.json", help="Env file path")
+    env_file: str = typer.Option(default=ENVFILE, help="Env file path")
 ):
     from llm_evaluator.utils.fileio import FileReader, FileWriter
     from llm_evaluator.utils.secrets import encode, decode
@@ -92,6 +94,24 @@ def peek(
         for k, v in inner_dict.items():
             env_table.add_row(k, str(v))
         console.print(env_table)
+
+
+@app.command(help="Trigger API", name="api-run")
+def run_api(
+    worker: int = typer.Option(
+        default=2,
+        help="Number of worker in API",
+    ),
+    main_api: str = typer.Option(
+        default="llm_evaluator.backend.__main__:app",
+        help="Main API app",
+    ),
+):
+    # default to be gunicorn
+    run_cmd = f"gunicorn --workers {worker} --preload --worker-class=uvicorn.workers.UvicornWorker {main_api}"
+    import os
+
+    os.system(run_cmd)
 
 
 if __name__ == "__main__":
