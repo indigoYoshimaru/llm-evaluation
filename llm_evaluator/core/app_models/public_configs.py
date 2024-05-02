@@ -5,13 +5,6 @@ from loguru import logger
 
 file_reader = FileReader()
 
-class GeneratorParamsConfig(BaseModel): 
-    "max_goldens_per_document": 3,
-    "chunk_size": 1024,
-    "chunk_overlap": 0,
-    "num_evolutions": 1,
-    "enable_breadth_evolve": False
-
 
 class SynthesizerConfig(BaseModel):
     db_name: Text = None
@@ -21,8 +14,16 @@ class SynthesizerConfig(BaseModel):
     context_form: Text = None
     doc_idx: int = 0
 
-    def __init__(self, config_path: Text, data_source: Text):
+    def __init__(
+        self,
+        config_path: Text,
+        data_source: Text,
+        cfg_dict: Dict = None,
+    ):
         try:
+            if cfg_dict:
+                super().__init__(context_form=data_source, **cfg_dict)
+                return
             cfg_dict = file_reader.read(config_path)
             assert cfg_dict, "Cannot find config file"
 
@@ -51,6 +52,9 @@ class EvaluatorConfig(BaseModel):
 
     def __init__(self, config_path: Text):
         try:
+            if cfg_dict:
+                super().__init__(**cfg_dict)
+                return
             cfg_dict = file_reader.read(config_path)
             assert cfg_dict, "Cannot find config file"
         except Exception as e:

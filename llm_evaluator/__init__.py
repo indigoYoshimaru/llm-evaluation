@@ -7,6 +7,7 @@ APPDIR = llm_evaluator.__path__[0]
 ENVFILE = os.path.join(APPDIR, "launch.json")
 ENVCFG = None
 
+
 def init():
     global APPDIR, ENVFILE, ENVCFG
     try:
@@ -18,19 +19,27 @@ def init():
         assert os.path.isfile(ENVFILE), "Invalid envfile."
 
     except Exception as e:
-        logger.error(
-            f"{type(e).__name__}: {e}. Missing env file. Please export the env file or use CLI's init"
-        )
+        logger.error(f"{type(e).__name__}: {e}. Environment file missing")
         raise e
     else:
-        os.environ["default_run"] = "True"
         logger.info(f"Loading env config from {ENVFILE}")
         ENVCFG = env_configs.EnvConfig(config_path=ENVFILE)
         os.environ["OPENAI_API_KEY"] = ENVCFG.openai.key
 
 
-if __name__ == "__main__":
-    if os.environ["default_init"]:
+def trigger_init():
+    import dotenv
+
+    global ENVCFG
+    try:
+        dotenv.load_dotenv(dotenv_path=os.path.join(APPDIR, ".env"))
+        default_init = os.environ.get("default_run", False)
+        assert default_init, "Cannot run default init, Please use CLI's init!"
+        logger.info(f"{ENVCFG=}")
         init()
-    else:
-        logger.info(f"Please export the env file to env_file or use CLI's init")
+    except Exception as e:
+        logger.warning(f"{type(e).__name__}: {e}")
+
+
+
+trigger_init()

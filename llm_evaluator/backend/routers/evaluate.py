@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends
 from loguru import logger
 
-router = APIRouter()
+router = APIRouter(prefix="/evaluate")
+
+

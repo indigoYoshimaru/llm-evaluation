@@ -60,7 +60,7 @@ def create_mqc_dataset(
 def create_qa_dataset(
     config_file: str = typer.Option(
         default="./configs/synthesize.json",
-        help="Directory to your synthesis config",
+        help="Relative path to your synthesis config",
     ),
     dataset_save_dir: str = typer.Option(
         default="", help="Where to save the dataset locally"
@@ -104,4 +104,6 @@ def create_qa_dataset(
 
 
 if __name__ == "__main__":
+    from llm_evaluator import trigger_init
+    trigger_init()
     app()

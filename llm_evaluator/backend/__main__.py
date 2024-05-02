@@ -4,8 +4,10 @@ from fastapi import FastAPI
 from llm_evaluator.backend.routers import get_all_routers
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
+from llm_evaluator import trigger_init
 
 try:
+    trigger_init()
 
     app = FastAPI(
         title="LLM Evaluator",
@@ -18,13 +20,13 @@ try:
     # app.mount("/frontend", StaticFiles(directory ="frontend", html=True), name = "frontend" )
 
     origins = ["http://0.0.0.0:8000"]
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # app.add_middleware(
+    #     CORSMiddleware,
+    #     allow_origins=origins,
+    #     allow_credentials=True,
+    #     allow_methods=["*"],
+    #     allow_headers=["*"],
+    # )
 
     for router in get_all_routers():
         app.include_router(router)

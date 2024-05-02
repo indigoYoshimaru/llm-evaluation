@@ -22,6 +22,7 @@ class Synthesizer(BaseModel):
         from markdownify import markdownify as md
         from pymongo.mongo_client import MongoClient
 
+        global ENVCFG
         try:
             db_client = MongoClient(str(ENVCFG.db))
             collection = db_client[self.config.db_name][self.config.collection_name]
@@ -35,7 +36,7 @@ class Synthesizer(BaseModel):
                 list(filter(lambda x: x and not x.isspace(), chunk))
                 for chunk in chunk_content
             ]
-
+            logger.info(f"Retrieved {len(chunk_content)} chunks for this document")
         except Exception as e:
             raise e
         else:
@@ -88,13 +89,22 @@ class Synthesizer(BaseModel):
             generator = synthesizer.Synthesizer(model=syn_model)
             generator.using_native_model = True
             gen_func = gen_func_mapper[self.config.context_form]
-
-            gen_func(generator, input_data, **self.config.generator)
+            logger.info(f"Start generating dataset. This may take a few minutes... ")
+            gen_func(
+                generator,
+                input_data,
+                **self.config.generator,
+                _show_indicator=False,
+            )
 
         except Exception as e:
             logger.error(f"{type(e).__name__}: {e} happened during generating dataset")
             raise e
-        return document_id, dataset
+        else:
+            logger.success(
+                f"Generated for document number {document_id} in the database"
+            )
+            return document_id, dataset
 
     def save_local(
         self,
@@ -123,4 +133,5 @@ class Synthesizer(BaseModel):
         except Exception as e:
             raise e
         else:
-            logger.info(f"Saved dataset to {dataset_save_dir}")
+            logger.success(f"Saved dataset to {dataset_save_dir}")
+            return json_data

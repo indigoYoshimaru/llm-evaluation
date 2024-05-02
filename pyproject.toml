@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm_evaluator"
-version = "0.1.0"
+version = "1.0.0"
 description = "LLM-Evaluator: Fast synthesis dataset creation and LLM pipeline evaluation. Accelerate testing and performance assessment with ease."
 authors = ["Linh Phung"]
 readme = "README.md"
