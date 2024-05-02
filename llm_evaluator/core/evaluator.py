@@ -122,9 +122,9 @@ class Evaluator(BaseModel):
                     task_list = list()
             except Exception as e:
                 logger.error(f"{type(e).__name__}: {e} Cannot get answer from chat API")
-                raise e
-
-        await asyncio.wait(task_list)
+                continue
+        if len(task_list) > 0:
+            await asyncio.wait(task_list)
 
     async def __get_answer(self, test_case_idx: int, ticket_id: int):
         from pymongo import MongoClient
@@ -142,23 +142,27 @@ class Evaluator(BaseModel):
             chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
 
             while chat_ticket["status"] != "DONE":
-                await asyncio.sleep(2)
+                await asyncio.sleep(3)
                 chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
                 logger.info(f"Getting answers from {ticket_id=}")
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
             context_chunks = chat_ticket["context"]
+
+            logger.success(f"Got answers from {ticket_id=}!")
             score_max_arg = max(
                 range(len(context_chunks)), key=lambda x: context_chunks[x]["score"]
             )
 
-            self.dataset.test_cases[test_case_idx].retrieval_context = [
-                context_chunks[score_max_arg]["page_content"]
-            ]
         except Exception as e:
             logger.error(
                 f"{type(e).__name__}: {e}. Cannot retrieve content of ticket {ticket_id}"
             )
-            raise e
+            self.dataset.test_cases[test_case_idx].retrieval_context = [
+                "Cannot answer this question"
+            ]
         else:
-            logger.success(f"Got answers from {ticket_id=}!")
+
+            self.dataset.test_cases[test_case_idx].retrieval_context = [
+                context_chunks[score_max_arg]["page_content"]
+            ]

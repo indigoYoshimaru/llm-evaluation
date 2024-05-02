@@ -50,7 +50,7 @@ class EvaluatorConfig(BaseModel):
     model_api: Text = None
     metric_params: Dict = None
 
-    def __init__(self, config_path: Text):
+    def __init__(self, config_path: Text, cfg_dict: Dict = {}):
         try:
             if cfg_dict:
                 super().__init__(**cfg_dict)
