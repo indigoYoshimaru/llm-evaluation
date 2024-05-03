@@ -74,10 +74,10 @@ def create_qa_dataset_from_context(
         return json_data
 
 
-@router.post("/question-answering/docs")
-def create_qa_dataset_from_docs(): ...
+# @router.post("/question-answering/docs")
+# def create_qa_dataset_from_docs(): ...
 
 
-@router.post("/mqc")
-def create_mqc_dataset():
-    raise NotImplementedError(f"Working...")
+# @router.post("/mqc")
+# def create_mqc_dataset():
+#     raise NotImplementedError(f"Working...")

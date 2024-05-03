@@ -148,7 +148,7 @@ class Evaluator(BaseModel):
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
             context_chunks = chat_ticket["context"]
-
+            assert context_chunks, "No context retrieved!"
             logger.success(f"Got answers from {ticket_id=}!")
             score_max_arg = max(
                 range(len(context_chunks)), key=lambda x: context_chunks[x]["score"]
@@ -159,7 +159,7 @@ class Evaluator(BaseModel):
                 f"{type(e).__name__}: {e}. Cannot retrieve content of ticket {ticket_id}"
             )
             self.dataset.test_cases[test_case_idx].retrieval_context = [
-                "Cannot answer this question"
+                "No context retrieved"
             ]
         else:
 

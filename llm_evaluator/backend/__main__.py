@@ -4,22 +4,18 @@ from fastapi import FastAPI
 from llm_evaluator.backend.routers import get_all_routers
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
-from llm_evaluator import trigger_init
+
+# from llm_evaluator import trigger_init
 
 try:
-    trigger_init()
 
-    app = FastAPI(
-        title="LLM Evaluator",
-        description="Fast synthesis dataset creation and LLM pipeline evaluation. Accelerate testing and performance assessment with ease.",
-        version="0.0.1",
-        docs_url="/docs",
-        root_path=os.getenv("ROOT_PATH", ""),
-    )
+    from llm_evaluator import APICFG
+
+    app = FastAPI(**APICFG.api_info)
 
     # app.mount("/frontend", StaticFiles(directory ="frontend", html=True), name = "frontend" )
 
-    origins = ["http://0.0.0.0:8000"]
+    # origins = api_cfg.origins
     # app.add_middleware(
     #     CORSMiddleware,
     #     allow_origins=origins,

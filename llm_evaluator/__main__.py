@@ -37,7 +37,7 @@ def init(
 
     except Exception as e:
         logger.warning(f"{type(e).__name__}: {e}")
-        raise e 
+        raise e
 
 
 @app.command(help="Env var update", name="env")
@@ -111,7 +111,7 @@ def peek(env_file: str = typer.Option(default=ENVFILE, help="Env file path")):
 
 @app.command(help="Trigger API", name="api-run")
 def run_api(
-    worker: int = typer.Option(
+    num_workers: int = typer.Option(
         default=2,
         help="Number of worker in API",
     ),
@@ -120,11 +120,22 @@ def run_api(
         help="Main API app",
     ),
 ):
-    # default to be gunicorn
-    run_cmd = f"gunicorn --workers {worker} --preload --worker-class=uvicorn.workers.UvicornWorker {main_api}"
-    import os
+    # # default to be gunicorn
+    # run_cmd = f"gunicorn --workers {worker} --preload --worker-class=uvicorn.workers.UvicornWorker {main_api}"
 
-    os.system(run_cmd)
+    # import os
+
+    # os.system(run_cmd)
+
+    from llm_evaluator.core.app_models.api_configs import StandaloneApplication
+    from llm_evaluator import api_init
+
+    trigger_init()
+    api_init(num_workers=num_workers)
+
+    from llm_evaluator import APICFG
+
+    StandaloneApplication(main_api, APICFG.web_server.model_dump()).run()
 
 
 if __name__ == "__main__":
