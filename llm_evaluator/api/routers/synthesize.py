@@ -67,7 +67,7 @@ def create_qa_dataset_from_context(
         logger.error(f"{type(e).__name__}: {e} Cannot save dataset")
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {e}")
     else:
-        logger.success()
+        logger.success(msg)
         return dict(
             detail=msg,
             dataset=dataset,
