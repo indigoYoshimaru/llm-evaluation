@@ -116,7 +116,7 @@ def run_api(
         help="Number of worker in API",
     ),
     main_api: str = typer.Option(
-        default="llm_evaluator.backend.__main__:app",
+        default="llm_evaluator.api.__main__:app",
         help="Main API app",
     ),
 ):

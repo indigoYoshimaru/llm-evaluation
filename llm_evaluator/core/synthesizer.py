@@ -27,10 +27,10 @@ class Synthesizer(BaseModel):
             db_client = MongoClient(str(ENVCFG.db))
             collection = db_client[self.config.db_name][self.config.collection_name]
 
-            doc = collection.find(dict(status="APPROVED")).sort(dict(_id=-1))[
-                self.config.doc_idx
-            ]
-
+            doc = collection.find(
+                dict(status="APPROVED", document_id=self.config.doc_idx)
+            )[0]
+            assert doc, "No document found"
             chunk_content = [chunk.split("\n") for chunk in doc["chunk_content"]]
             chunk_content = [
                 list(filter(lambda x: x and not x.isspace(), chunk))
@@ -96,7 +96,7 @@ class Synthesizer(BaseModel):
                 **self.config.generator,
                 _show_indicator=False,
             )
-
+            processed_dataset = self._post_process(dataset)
         except Exception as e:
             logger.error(f"{type(e).__name__}: {e} happened during generating dataset")
             raise e
@@ -104,34 +104,15 @@ class Synthesizer(BaseModel):
             logger.success(
                 f"Generated for document number {document_id} in the database"
             )
-            return document_id, dataset
+            return document_id, processed_dataset
 
-    def save_local(
-        self,
-        dataset: EvaluationDataset,
-        dataset_save_dir: Text,
-        document_id: Text,
-    ):
-        try:
-
-            from llm_evaluator.utils.fileio import FileWriter
-            import os
-
-            file_writer = FileWriter()
-            dataset_path = os.path.join(dataset_save_dir, f"{document_id}.json")
-            json_data = [
-                {
-                    "input": golden.input,
-                    "actual_output": golden.actual_output,
-                    "expected_output": golden.expected_output,
-                    "context": golden.context,
-                }
-                for golden in dataset.goldens
-            ]
-            file_writer.write(file_path=dataset_path, content=json_data)
-
-        except Exception as e:
-            raise e
-        else:
-            logger.success(f"Saved dataset to {dataset_save_dir}")
-            return json_data
+    def _post_process(self, dataset: EvaluationDataset):
+        return [
+            {
+                "input": golden.input,
+                "actual_output": golden.actual_output,
+                "expected_output": golden.expected_output,
+                "context": golden.context,
+            }
+            for golden in dataset.goldens
+        ]

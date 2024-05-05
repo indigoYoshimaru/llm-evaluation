@@ -23,7 +23,7 @@ def create_qa_dataset_from_context(
         ContextSynthesisParams, Depends(ContextSynthesisParams)
     ],
     model: Text = "gpt-3.5-turbo-0125",
-    dataset_save_dir: Text = "dataset",
+    is_saved: bool = False,
 ):
 
     import os
@@ -56,22 +56,22 @@ def create_qa_dataset_from_context(
         logger.error(f"{type(e).__name__}: {e} happened during generating dataset")
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {e}")
     try:
-        if dataset_save_dir:
+        msg = f"Dataset from {document_id} is generated successfully."
+        if is_saved:
+            from llm_evaluator.utils.dataset import save_dataset
 
-            dataset_save_dir = os.path.join(
-                os.getcwd(),
-                dataset_save_dir,
-                "qa",
-            )
-            if not os.path.exists(dataset_save_dir):
-                os.mkdir(dataset_save_dir)
-            json_data = synthesizer.save_local(dataset, dataset_save_dir, document_id)
+            dataset_save_dir = os.path.join(os.getcwd(), "dataset")
+            save_dataset(dataset, dataset_save_dir, document_id)
+            msg = f"Dataset {document_id}.json is generated and saved successfully."
     except Exception as e:
         logger.error(f"{type(e).__name__}: {e} Cannot save dataset")
         raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {e}")
     else:
-        logger.success(f"Dataset generated and saved successfully")
-        return json_data
+        logger.success()
+        return dict(
+            detail=msg,
+            dataset=dataset,
+        )
 
 
 # @router.post("/question-answering/docs")

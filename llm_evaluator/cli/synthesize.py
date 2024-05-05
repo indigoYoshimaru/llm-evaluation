@@ -50,7 +50,7 @@ def create_mqc_dataset(
     #     dataset_save_dir = os.path.join(dataset_save_dir, "mqc")
     #     if not os.path.exists(dataset_save_dir):
     #         os.mkdir(dataset_save_dir)
-    #     synthesizer.save_local(dataset, dataset_save_dir, document_id)
+    #     save_dataset(dataset, dataset_save_dir, document_id)
 
 
 @app.command(
@@ -100,7 +100,7 @@ def create_qa_dataset(
         )
         if not os.path.exists(dataset_save_dir):
             os.mkdir(dataset_save_dir)
-        synthesizer.save_local(dataset, dataset_save_dir, document_id)
+        save_dataset(dataset, dataset_save_dir, document_id)
 
 
 if __name__ == "__main__":

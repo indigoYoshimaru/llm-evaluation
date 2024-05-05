@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, UploadFile, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from loguru import logger
-from typing import Annotated
+from typing import Annotated, Text
 from llm_evaluator.core.app_models.api_params import (
     EvaluatorSourceParams,
     GenEvaluatorMetricParams,
@@ -8,27 +8,9 @@ from llm_evaluator.core.app_models.api_params import (
 )
 
 from llm_evaluator.core.app_models.public_configs import EvaluatorConfig
-from typing import Text
 from llm_evaluator.core.evaluator import Evaluator
 
 router = APIRouter(prefix="/evaluate")
-
-
-@router.post("/upload-dataset")
-def upload_dataset(dataset: UploadFile):
-    if not dataset.filename.endswith(".json"):
-        raise HTTPException(status_code=415, detail="Expected JSON file")
-    try:
-        file_location = f"dataset/upload/{dataset.filename}"
-        with open(file_location, "wb+") as file_object:
-            file_object.write(dataset.file.read())
-    except Exception as e:
-        logger.error(f"{type(e).__name__}: {e}")
-        raise HTTPException(status_code=409, detail=f"{type(e).__name__}: {e}")
-    else:
-        msg = f"Uploaded file {dataset.filename}"
-        logger.info(msg)
-        return msg
 
 
 @router.post("/generator")
@@ -46,10 +28,13 @@ def eval_generator(
         # NEEDS UPDATING TO DB SAVE
         import os
 
+        file_ext = ".json"  # hardcode since we only use json for now!
+        if not dataset_filename.endswith(file_ext):
+            dataset_filename += file_ext
         dataset_path = str(
             os.path.join(
                 os.getcwd(),
-                "dataset/upload",
+                "dataset",
                 dataset_filename,
             )
         )
@@ -74,7 +59,6 @@ def eval_generator(
         )
     else:
         logger.success(f"Evaluated dataset {dataset_path}")
-        # os.remove(dataset_path)
         return test_results
 
 
@@ -87,16 +71,18 @@ def eval_retriever(
     dataset_filename: Text,
     judge_model: Text = "gpt-3.5-turbo-0125",
 ):
-    from llm_evaluator.core.enums import QuestionTypeEnum
 
     try:
         # NEEDS UPDATING TO DB SAVE
         import os
 
+        file_ext = ".json"  # hardcode since we only use json for now!
+        if not dataset_filename.endswith(file_ext):
+            dataset_filename += file_ext
         dataset_path = str(
             os.path.join(
                 os.getcwd(),
-                "dataset/upload",
+                "dataset",
                 dataset_filename,
             )
         )
@@ -121,7 +107,4 @@ def eval_retriever(
         )
     else:
         logger.success(f"Evaluated dataset {dataset_path}")
-        # os.remove(dataset_path)
         return test_results
-    
-    

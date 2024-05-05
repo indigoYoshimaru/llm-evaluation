@@ -1,7 +1,7 @@
 import os
 
 from fastapi import FastAPI
-from llm_evaluator.backend.routers import get_all_routers
+from llm_evaluator.api.routers import get_all_routers
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 

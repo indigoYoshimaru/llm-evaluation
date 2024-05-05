@@ -20,9 +20,9 @@ class ContextSynthesisParams(BaseModel):
 
 
 class ContextSynthesisSourceParams(BaseModel):
+    doc_idx: Text
     db_name: Text = "innovation_stg_internal-trainer"
     collection_name: Text = "document_upload"
-    doc_idx: NonNegativeInt = 0
 
 
 class DocsSynthesisSourceParams(BaseModel):

@@ -12,7 +12,7 @@ class SynthesizerConfig(BaseModel):
     document_paths: List = None
     generator: Dict = None
     context_form: Text = None
-    doc_idx: int = 0
+    doc_idx: Text = None
 
     def __init__(
         self,
