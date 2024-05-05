@@ -47,7 +47,7 @@ class EvaluatorConfig(BaseModel):
     db_name: Text = None
     collection_name: Text = None
     metrics: Dict = None
-    model_api: Text = None
+    model_url: Text = None
     metric_params: Dict = None
 
     def __init__(self, config_path: Text, cfg_dict: Dict = {}):

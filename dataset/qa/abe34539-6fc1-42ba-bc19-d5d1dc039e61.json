@@ -1,0 +1,32 @@
+[
+    {
+        "input": "Văn phòng chính của Buymed đặt tại địa chỉ nào?",
+        "actual_output": null,
+        "expected_output": null,
+        "context": [
+            "(Buymed/Thông tin công ty) ",
+            " Công Ty TNHH Buymed",
+            "Địa Chỉ:",
+            "Tầng 8, Tòa Nhà Vincom Center Đồng Khởi, 72 Lê Thánh Tôn, Phường Bến Nghé, Quận 1, Thành Phố Hồ Chí Minh, Việt Nam",
+            "Số Chứng Nhận ĐKKD: 0314758651, Cấp Ngày 29/11/2017, Tại Sở Kế Hoạch Và Đầu Tư Thành Phố Hồ Chí Minh",
+            "Số Giấy Phép Sàn Thương Mại Điện Tử: 0314758651/KD-0368",
+            "Mã số thuế:    0314758651",
+            "VĂN PHÒNG ĐẠI DIỆN ĐÀ NẴNG - CÔNG TY TNHH BUYMED Mã số thuế: 0314758651-001"
+        ]
+    },
+    {
+        "input": "So sánh ngày cấp số chứng nhận ĐKKD của Buymed và ngày cấp số giấy phép sàn thương mại điện tử.",
+        "actual_output": null,
+        "expected_output": null,
+        "context": [
+            "(Buymed/Thông tin công ty) ",
+            " Công Ty TNHH Buymed",
+            "Địa Chỉ:",
+            "Tầng 8, Tòa Nhà Vincom Center Đồng Khởi, 72 Lê Thánh Tôn, Phường Bến Nghé, Quận 1, Thành Phố Hồ Chí Minh, Việt Nam",
+            "Số Chứng Nhận ĐKKD: 0314758651, Cấp Ngày 29/11/2017, Tại Sở Kế Hoạch Và Đầu Tư Thành Phố Hồ Chí Minh",
+            "Số Giấy Phép Sàn Thương Mại Điện Tử: 0314758651/KD-0368",
+            "Mã số thuế:    0314758651",
+            "VĂN PHÒNG ĐẠI DIỆN ĐÀ NẴNG - CÔNG TY TNHH BUYMED Mã số thuế: 0314758651-001"
+        ]
+    }
+]

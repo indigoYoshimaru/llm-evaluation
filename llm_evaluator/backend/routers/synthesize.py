@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from loguru import logger
-from llm_evaluator.core.app_models.params import (
+from llm_evaluator.core.app_models.api_params import (
     DocsSynthesisParams,
     DocsSynthesisSourceParams,
     ContextSynthesisParams,
@@ -36,7 +36,7 @@ def create_qa_dataset_from_context(
         data_source = DataSourceEnum.retrieve_context
         cfg_dict = data_src_params.model_dump()
         cfg_dict["generator"] = generator_params.model_dump()
-
+        assert cfg_dict, "Empty config"
         synthesizer_cfg = SynthesizerConfig(
             config_path="",
             data_source=data_source.value,

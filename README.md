@@ -119,7 +119,7 @@ The metrics used in these section will be discussed in other documents
     {
         "db_name": name to the corresponding database,
         "collection_name": collection of the chat ticket,
-        "model_api": api of the evaluated model, 
+        "model_url": api of the evaluated model, 
         "metrics": {
             "hallucination": true if enable, false if disable,
             "answer_relevancy": true if enable, false if disable,
@@ -151,7 +151,7 @@ The metrics used in these section will be discussed in other documents
         {
             "db_name": name to the corresponding database,
             "collection_name": collection of the chat ticket,
-            "model_api": api of the evaluated model, 
+            "model_url": api of the evaluated model, 
             "metrics": {
                 "context_rouge": true if enable, false if disable,
                 "context_bleu": true if enable, false if disable, 

@@ -46,7 +46,9 @@ class Evaluator(BaseModel):
                 context_key_name="context",
             )
             logger.info(f"Invoking chat API...")
-            loop = asyncio.get_event_loop()
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
             loop.run_until_complete(self.__invoke_chat_api())
             loop.close()
         except Exception as e:
@@ -88,7 +90,7 @@ class Evaluator(BaseModel):
         for idx, test_case in enumerate(self.dataset.test_cases):
             try:
                 response = re.post(
-                    url=self.config.model_api,
+                    url=self.config.model_url,
                     headers=ENVCFG.headers,
                     json=dict(
                         question=test_case.input,

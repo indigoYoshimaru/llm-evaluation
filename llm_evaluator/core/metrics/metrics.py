@@ -7,12 +7,12 @@ from pydantic import BaseModel
 class QAJudgeMetrics(Enum):
     answer_relevancy = AnswerRelevancyMetric
     hallucination = HallucinationMetric
-    faithfullness = FaithfulnessMetric
+    faithfulness = FaithfulnessMetric
     bias = BiasMetric
     toxicity = ToxicityMetric
 
 
-class RAGJudgeMetrics(Enum):
+class RetrieverJudgeMetrics(Enum):
     context_rouge = ContextRougeMetric
     context_bleu = ContextBleuMetric
     contextual_precision = ContextualPrecisionMetric
@@ -26,7 +26,7 @@ class MQCJudgeMetrics(Enum):
 class MetricTypeEnum(BaseModel): 
     mqc: Enum = MQCJudgeMetrics
     qa: Enum = QAJudgeMetrics
-    rag: Enum = RAGJudgeMetrics
+    rag: Enum = RetrieverJudgeMetrics
 
 
 
