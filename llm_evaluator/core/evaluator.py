@@ -46,7 +46,9 @@ class Evaluator(BaseModel):
                 context_key_name="context",
             )
             logger.info(f"Invoking chat API...")
-            loop = asyncio.get_event_loop()
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
             loop.run_until_complete(self.__invoke_chat_api())
             loop.close()
         except Exception as e:
@@ -88,7 +90,7 @@ class Evaluator(BaseModel):
         for idx, test_case in enumerate(self.dataset.test_cases):
             try:
                 response = re.post(
-                    url=self.config.model_api,
+                    url=self.config.model_url,
                     headers=ENVCFG.headers,
                     json=dict(
                         question=test_case.input,
@@ -96,18 +98,21 @@ class Evaluator(BaseModel):
                     ),
                     timeout=20,
                 ).json()
-            except re.exceptions.Timeout as timeout_err:
-                logger.warning(
-                    f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
-                )
-                continue
-            try:
+
                 response_data = response.get("data", [])
                 assert response_data, response
                 ticket_id = response_data[0].get("ticket_id", "")
                 assert ticket_id, "No ticket id"
 
-                # answer, context = self.__get_answer(ticket_id=ticket_id)
+            except re.exceptions.Timeout as timeout_err:
+                logger.warning(
+                    f"{type(timeout_err).__name__}: {timeout_err} happened for {test_case.input}. Skipping..."
+                )
+                continue
+            except AssertionError as e:
+                logger.warning(f"Empty response for question {test_case.input=}")
+                continue
+            try:
 
                 task_list.append(
                     asyncio.create_task(
@@ -118,12 +123,10 @@ class Evaluator(BaseModel):
                     await asyncio.wait(task_list)
                     task_list = list()
             except Exception as e:
-                logger.error(
-                    f"{type(e).__name__}: {e} Cannot invoke chat API with {response_data=}"
-                )
-                raise e
-
-        await asyncio.wait(task_list)
+                logger.error(f"{type(e).__name__}: {e} Cannot get answer from chat API")
+                continue
+        if len(task_list) > 0:
+            await asyncio.wait(task_list)
 
     async def __get_answer(self, test_case_idx: int, ticket_id: int):
         from pymongo import MongoClient
@@ -141,23 +144,27 @@ class Evaluator(BaseModel):
             chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
 
             while chat_ticket["status"] != "DONE":
-                await asyncio.sleep(2)
+                await asyncio.sleep(3)
                 chat_ticket = collection.find(dict(ticket_id=ticket_id))[0]
                 logger.info(f"Getting answers from {ticket_id=}")
 
             self.dataset.test_cases[test_case_idx].actual_output = chat_ticket["answer"]
             context_chunks = chat_ticket["context"]
+            assert context_chunks, "No context retrieved!"
+            logger.success(f"Got answers from {ticket_id=}!")
             score_max_arg = max(
                 range(len(context_chunks)), key=lambda x: context_chunks[x]["score"]
             )
 
-            self.dataset.test_cases[test_case_idx].retrieval_context = [
-                context_chunks[score_max_arg]["page_content"]
-            ]
         except Exception as e:
             logger.error(
                 f"{type(e).__name__}: {e}. Cannot retrieve content of ticket {ticket_id}"
             )
-            raise e
+            self.dataset.test_cases[test_case_idx].retrieval_context = [
+                "No context retrieved"
+            ]
         else:
-            logger.success(f"Got answers from {ticket_id=}!")
+
+            self.dataset.test_cases[test_case_idx].retrieval_context = [
+                context_chunks[score_max_arg]["page_content"]
+            ]

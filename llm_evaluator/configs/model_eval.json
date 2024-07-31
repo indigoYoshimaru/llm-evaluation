@@ -1,11 +1,11 @@
 {
     "db_name": "innovation_stg_internal-trainer",
     "collection_name": "chat_ticket",
-    "model_api": "https://api.stg.buymed.tech/buymed-innovation/internal-trainer/v1/chat", 
+    "model_url": "https://api.stg.buymed.tech/buymed-innovation/internal-trainer/v1/chat", 
     "metrics": {
         "hallucination": false,
         "answer_relevancy": true,
-        "faithfullness": true,
+        "faithfulness": true,
         "bias": false,
         "toxicity": false
     },

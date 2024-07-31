@@ -404,6 +404,7 @@ class VietnamEvolutionTemplate:
             4. `Rewritten Input` should not contain phrases like 'based on the provided context' or 'according to the context'.
             5. `Rewritten Input` must be fully answerable from information in `Context`.
             6. `Rewritten Input` should not contain more than 15 words. Use abbreviation wherever possible.
+            7. `Rewritten Input` must still be a question
 
             **
             EXAMPLES

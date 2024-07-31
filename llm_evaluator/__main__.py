@@ -1,7 +1,8 @@
 import typer
+from loguru import logger
+from llm_evaluator import ENVFILE, trigger_init
 from llm_evaluator.cli import evaluate, synthesize
 from llm_evaluator.core.app_models.env_configs import EnvVarEnum
-from loguru import logger
 
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(evaluate.app)
@@ -20,7 +21,23 @@ def init(
     import os
 
     shutil.copy(env_path, APPDIR)
-    os.environ["env_file"] = str(os.path.join(APPDIR, "launch.json"))
+    keys = ["env_file", "default_run"]
+    vals = [str(os.path.join(APPDIR, "launch.json")), "True"]
+
+    try:
+        import dotenv
+
+        dotenv_path = os.path.join(APPDIR, ".env")
+        for k, v in zip(keys, vals):
+            dotenv.set_key(
+                dotenv_path=dotenv_path,
+                key_to_set=k,
+                value_to_set=v,
+            )
+
+    except Exception as e:
+        logger.warning(f"{type(e).__name__}: {e}")
+        raise e
 
 
 @app.command(help="Env var update", name="env")
@@ -66,9 +83,7 @@ def change_env_var(
 
 
 @app.command(help="Temporary peek at true env file structure", name="env-peek")
-def peek(
-    env_file: str = typer.Option(default=".vscode/launch.json", help="Env file path")
-):
+def peek(env_file: str = typer.Option(default=ENVFILE, help="Env file path")):
     from llm_evaluator.utils.fileio import FileReader, FileWriter
     from llm_evaluator.utils.secrets import encode, decode
 
@@ -94,5 +109,35 @@ def peek(
         console.print(env_table)
 
 
+@app.command(help="Trigger API", name="api-run")
+def run_api(
+    num_workers: int = typer.Option(
+        default=2,
+        help="Number of worker in API",
+    ),
+    main_api: str = typer.Option(
+        default="llm_evaluator.api.__main__:app",
+        help="Main API app",
+    ),
+):
+    # # default to be gunicorn
+    # run_cmd = f"gunicorn --workers {worker} --preload --worker-class=uvicorn.workers.UvicornWorker {main_api}"
+
+    # import os
+
+    # os.system(run_cmd)
+
+    from llm_evaluator.core.app_models.api_configs import StandaloneApplication
+    from llm_evaluator import api_init
+
+    trigger_init()
+    api_init(num_workers=num_workers)
+
+    from llm_evaluator import APICFG
+
+    StandaloneApplication(main_api, APICFG.web_server.model_dump()).run()
+
+
 if __name__ == "__main__":
+    # trigger_init()
     app()

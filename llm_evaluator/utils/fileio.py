@@ -1,7 +1,5 @@
 from typing import Text, Dict, Any, Union, List, Generator
 from pydantic import BaseModel, Field
-
-# from gcsfs import GCSFileSystem as GCSFS
 from fs_gcsfs import GCSFS
 import pandas as pd
 from fs.osfs import OSFS
@@ -37,7 +35,7 @@ class ReaderWriterBase(BaseModel):
         if not fs:
             logger.info("No GCSFS provided. Using OS filesystem.")
             fs = OSFS(root_path="/")
-            
+
         super().__init__(
             fs=fs,
             logger=logger,

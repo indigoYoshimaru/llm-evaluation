@@ -5,17 +5,51 @@ from loguru import logger
 
 APPDIR = llm_evaluator.__path__[0]
 ENVFILE = os.path.join(APPDIR, "launch.json")
+ENVCFG = None
+APICFG = None
 
-try:
-    if not os.path.exists(ENVFILE):
-        ENVFILE = os.environ.get("env_file")
-    assert ENVFILE, "Envfile path not exported."
-    assert os.path.exists(ENVFILE), "Invalid envfile path provided."
-    assert os.path.isfile(ENVFILE), "Invalid envfile."
-    
-except Exception as e:
-    logger.error(f"{type(e).__name__}: {e}. Missing env file. Please export the env file or use CLI's init")
-else:
-    logger.info(f"Loading env config from {ENVFILE}")
-    ENVCFG = env_configs.EnvConfig(config_path=ENVFILE)
-    os.environ["OPENAI_API_KEY"] = ENVCFG.openai.key
+
+def init():
+    global APPDIR, ENVFILE, ENVCFG
+    try:
+        if not os.path.exists(ENVFILE):
+            ENVFILE = os.environ.get("env_file")
+            logger.info(f"Retrieving env file from {ENVFILE}")
+        assert ENVFILE, "Envfile path not exported."
+        assert os.path.exists(ENVFILE), "Invalid envfile path provided."
+        assert os.path.isfile(ENVFILE), "Invalid envfile."
+
+    except Exception as e:
+        logger.error(f"{type(e).__name__}: {e}. Environment file missing")
+        raise e
+    else:
+        logger.info(f"Loading env config from {ENVFILE}")
+        ENVCFG = env_configs.EnvConfig(config_path=ENVFILE)
+        os.environ["OPENAI_API_KEY"] = ENVCFG.openai.key
+
+
+def api_init(num_workers):
+    global APICFG
+    from llm_evaluator.core.app_models.api_configs import APIConfigs
+
+    APICFG = APIConfigs(
+        config_path=os.path.join(APPDIR, "./configs/backend.json"),
+        num_workers=num_workers,
+    )
+    return APICFG
+
+def trigger_init():
+    import dotenv
+
+    global ENVCFG, APICFG
+    try:
+        dotenv.load_dotenv(dotenv_path=os.path.join(APPDIR, ".env"))
+        default_init = os.environ.get("default_run", False)
+        assert default_init, "Cannot run default init, Please use CLI's init!"
+        init()
+
+    except Exception as e:
+        logger.warning(f"{type(e).__name__}: {e}")
+
+
+trigger_init()

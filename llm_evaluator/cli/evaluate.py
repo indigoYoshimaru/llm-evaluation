@@ -12,8 +12,8 @@ app = typer.Typer(
 )
 
 
-@app.command()
-def eval_model(
+@app.command(name="generator", help="Evaluate your generator")
+def eval_generator(
     config_file: str = typer.Option(
         default="./configs/model_eval.json",
         help="Directory to your eval config file for tweaking metrics and threshold",
@@ -47,8 +47,8 @@ def eval_model(
     )
 
 
-@app.command()
-def eval_rag(
+@app.command(name="retriever", help="Evaluate your retriever")
+def eval_retriever(
     config_file: str = typer.Option(
         default="./configs/rag_eval.json",
         help="Directory to your eval config file for tweaking metrics and threshold",

@@ -12,15 +12,14 @@ The LLM Evaluator is a command-line interface (CLI) tool that allows you to crea
    ```
    llm-eval [command] --help 
    ```
-   
-3. To get the secret file, please follow the section [Getting your secrets](#getting-your-secrets)
-4. To init the CLI, run `llm-eval init [path-to-your-secret-file]`. Eg: 
+
+3. To init the CLI, run `llm-eval init [path-to-your-secret-file]`. Eg: 
    
    ```
    llm-eval init llm-evaluation/.vscode/launch.json
    ```
 
-5. You can adjust the settings from the files in `llm_evaluator/configs`. 
+4. You can adjust the settings from the files in `llm_evaluator/configs`. 
 
 ##  Dataset Synthesis
 
@@ -86,15 +85,7 @@ Example of a golden. Some datasets are generated in the `dataset/qa` folder
         "expected_output": null,
         "context": [
             "(DATA/GENERAL_POLICY/txt/meeting_room.txt) ",
-            " Hướng dẫn book phòng họp (Meeting Room)",
-            "* Văn phòng HCM:",
-            "\t+ Tạo cuộc họp mới trên Outlook Calendar và điền vào \"Subject, To & Time\"",
-            "\t+ Click vào chỗ trống bên cạnh \"Location\" và chọn phòng còn trống",
-            "\t+ Click “Sent” để gửi yêu cầu đặt phòng",
-            "* Văn Phòng HN:",
-            "\t+ Gửi email đến hung.pham@buymed.com, trước ít nhất 1 giờ",
-            "Lưu ý: Mỗi lần book tối đa 2 giờ. Đối với HCM, nếu muốn book trên 2h thì liên lạc",
-            "bac.dao@buymed.com"
+            "<intentionally-leave-blank>"
         ]
     }
 ```         
@@ -119,7 +110,7 @@ The metrics used in these section will be discussed in other documents
     {
         "db_name": name to the corresponding database,
         "collection_name": collection of the chat ticket,
-        "model_api": api of the evaluated model, 
+        "model_url": api of the evaluated model, 
         "metrics": {
             "hallucination": true if enable, false if disable,
             "answer_relevancy": true if enable, false if disable,
@@ -134,8 +125,8 @@ The metrics used in these section will be discussed in other documents
         }
     }
 ```
-![Example output](img/eval-model.png)
-### RAG
+
+### Retriever
 - Evaluate the quality of the retriever using metrics that measure scores between `retrieval_context` and others. 
 
 - Run command: 
@@ -151,7 +142,7 @@ The metrics used in these section will be discussed in other documents
         {
             "db_name": name to the corresponding database,
             "collection_name": collection of the chat ticket,
-            "model_api": api of the evaluated model, 
+            "model_url": api of the evaluated model, 
             "metrics": {
                 "context_rouge": true if enable, false if disable,
                 "context_bleu": true if enable, false if disable, 
@@ -167,40 +158,6 @@ The metrics used in these section will be discussed in other documents
 
         }
     ```
-![Example output](img/eval-rag.png)
 
-## Other docs
-### Getting your secrets
-1. Use the provided email and password to log in to Google Account
-2. Log in to [Doppler](https://dashboard.doppler.com/) by "Log in with Google" auth
-3. Go to `projects -> test-eval-secrets`, your dashboard should look like this
+This repo is out-of-date, so it serves as a simple illustration of what I had done in the main repo. 
 
-![Doppler Dashboard](img/dashboard.png)
-
-4. Copy the json secrets as in image and paste to your `launch.json` file
-
-![Copy Secrets](img/copy.png)
-
-5. Modify the file following this template: 
-```
-    {
-        "env": {
-            "service": <SERVICE>
-            "database": <DATABASE>
-            "env": "stg"
-        }
-    }
-```
-
-Working on a more elegant method to effortlessly control and share secrets...
-
-
-## TODO: 
-- [ ] Create API
-- [ ] Message delete after evaluate
-- [ ] Create multiple datasets at once
-- [ ] Evaluate on multiple datasets at once
-- [ ] Update metrics info
-- [ ] Add UI for configs settings
-- [ ] Add dataset viewer and modification platform
-- [ ] Evaluation results registry
