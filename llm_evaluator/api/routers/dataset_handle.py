@@ -14,7 +14,7 @@ def upload_dataset(dataset: UploadFile):
         import os
 
         file_location = f"dataset/{dataset.filename}"
-        assert os.path.isfile(
+        assert os.path.exists(
             file_location
         ), f"Dataset with name {dataset.filename} already exists"
         with open(file_location, "wb+") as file_object:
