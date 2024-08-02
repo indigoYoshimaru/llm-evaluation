@@ -1,7 +1,7 @@
 {
-    "db_name": "innovation_stg_internal-trainer",
-    "collection_name": "chat_ticket",
-    "model_url": "https://api.stg.buymed.tech/buymed-innovation/internal-trainer/v1/chat", 
+    "db_name": "",
+    "collection_name": "",
+    "model_url": "", 
     "metrics": {
         "context_rouge": true, 
         "context_bleu": true, 
